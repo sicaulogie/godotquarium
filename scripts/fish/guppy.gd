@@ -1,0 +1,43 @@
+extends Node2D
+
+enum Size { SMALL = 0, MEDIUM = 1, LARGE = 2, CROWNED = 3 }
+
+# Core state
+var hunger: int = 0
+var size: int = Size.SMALL
+var food_ate: int = 0
+var food_needed_to_grow: int = 0
+
+# Movement
+var vx: float = 0.1
+var vy: float = 0.0
+var prev_vx: float = 1.0
+var speed_mod: float = 1.8
+var vx_abs: int = 1
+var move_state: int = 0
+var move_state_timer: int = 0
+var special_timer: int = 0
+
+# Animation
+var turn_timer: int = 0
+var eating_timer: int = 0
+var growth_timer: int = 0
+var swim_frame_counter: float = 0.0
+var anim_frame_index: int = 0
+
+# Tank bounds
+var x_min: float = 20.0
+var x_max: float = 620.0
+var y_min: float = 80.0
+var y_max: float = 420.0
+
+func _ready():
+	if randi() % 2 == 0:
+		vx = -0.1
+		prev_vx = -1.0
+	else:
+		vx = 0.1
+		prev_vx = 1.0
+	food_needed_to_grow = randi_range(4, 6)
+	move_state = randi() % 9 + 1
+	special_timer = randi() % 40

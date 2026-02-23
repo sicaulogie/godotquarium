@@ -1,17 +1,31 @@
 [gd_scene format=3 uid="uid://cyn7vci2oclwx"]
 
-[ext_resource type="Script" uid="uid://25y1qnwr3r8h" path="res://scenes/fish.gd" id="1_n6yr6"]
+[ext_resource type="Script" uid="uid://25y1qnwr3r8h" path="res://scripts/fish/guppy.gd" id="1_n6yr6"]
 [ext_resource type="SpriteFrames" uid="uid://la22cmbi00m8" path="res://animations/guppy.tres" id="2_8g0i4"]
+[ext_resource type="Script" uid="uid://dstackfcis2x" path="res://scripts/fish/guppy_animation.gd" id="3_nub35"]
+[ext_resource type="Script" uid="uid://cqwobvyyn83sw" path="res://scripts/fish/guppy_movement.gd" id="3_pgks6"]
+[ext_resource type="Script" uid="uid://bj75wo3t236s5" path="res://scripts/fish/guppy_feeding.gd" id="5_6lgmd"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pgks6"]
+radius = 40.0
 
 [node name="Fish" type="Node2D" unique_id=142607553]
 script = ExtResource("1_n6yr6")
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=726390291]
 sprite_frames = ExtResource("2_8g0i4")
-animation = &"large_turn"
-frame = 2
-frame_progress = 0.96551996
+animation = &"small_turn"
 
-[node name="HungerArea" type="AnimatedSprite2D" parent="." unique_id=42909021]
+[node name="Movement" type="Node2D" parent="." unique_id=370579010]
+script = ExtResource("3_pgks6")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HungerArea" unique_id=636068253]
+[node name="Animation" type="Node2D" parent="." unique_id=62221785]
+script = ExtResource("3_nub35")
+
+[node name="Feeding" type="Node2D" parent="." unique_id=1711326092]
+script = ExtResource("5_6lgmd")
+
+[node name="FeedingArea" type="Area2D" parent="." unique_id=889150815]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FeedingArea" unique_id=1928645650]
+shape = SubResource("CircleShape2D_pgks6")

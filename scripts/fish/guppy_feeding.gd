@@ -1,0 +1,62 @@
+extends Node2D
+
+var fish: Node2D
+
+const FOOD_NORMAL_RESTORE = 500
+const FOOD_CAP_NORMAL = 800
+const HUNGER_START_MIN = 400
+const HUNGER_START_MAX = 600
+const HUNGER_DEAD = -499
+
+func _ready():
+	await owner.ready
+	fish = get_parent()
+	fish.hunger = randi_range(HUNGER_START_MIN, HUNGER_START_MAX)
+	var area = fish.get_node("FeedingArea")
+	area.area_entered.connect(_on_food_entered)
+
+func _physics_process(_delta):
+	if not is_instance_valid(fish):
+		return
+	_update_hunger()
+
+func _update_hunger():
+	if Engine.get_process_frames() % 2 == 0:
+		fish.hunger -= 1
+	# Death disabled for now — just clamp at minimum
+	fish.hunger = max(fish.hunger, -499)
+
+func _can_eat_food(food: Node2D) -> bool:
+	if food.picked_up or food.cant_eat_timer != 0:
+		return false
+	return true
+
+func _on_food_entered(area: Area2D):
+	if not area.is_in_group("food"):
+		return
+	var food = area.get_parent()
+	if not _can_eat_food(food):
+		return
+	_eat_food(food)
+	food.queue_free()
+
+func _eat_food(food: Node2D):
+	# food parameter reserved for future food type checks
+	fish.hunger += FOOD_NORMAL_RESTORE
+	fish.hunger = min(fish.hunger, FOOD_CAP_NORMAL)
+	fish.eating_timer = 8
+	_check_growth()
+
+func _check_growth():
+	fish.food_ate += 1
+	if fish.food_ate >= fish.food_needed_to_grow:
+		if fish.size < 2:
+			fish.size += 1
+			fish.food_ate = 0
+			fish.growth_timer = 10
+			return
+	if fish.food_ate >= fish.food_needed_to_grow * 15:
+		if fish.size == 2:
+			fish.size = 3
+			fish.food_ate = 0
+			fish.growth_timer = 10

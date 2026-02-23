@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://ctskbvkidq3ks"]
+
+[ext_resource type="SpriteFrames" uid="uid://bykb33owkkite" path="res://animations/food.tres" id="1_77ovl"]
+[ext_resource type="Script" uid="uid://krelfqcp2r0" path="res://scripts/food/food_base.gd" id="1_dkmuf"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_77ovl"]
+radius = 8.0
+
+[node name="Food" type="Node2D" unique_id=1168832898]
+script = ExtResource("1_dkmuf")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=1936517171]
+sprite_frames = ExtResource("1_77ovl")
+animation = &"food_pellet"
+frame = 9
+frame_progress = 0.41898918
+
+[node name="FoodArea" type="Area2D" parent="." unique_id=65385642]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FoodArea" unique_id=1658503086]
+shape = SubResource("CircleShape2D_77ovl")
