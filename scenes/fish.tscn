@@ -1,12 +1,15 @@
 [gd_scene format=3 uid="uid://cyn7vci2oclwx"]
 
+[ext_resource type="Script" uid="uid://25y1qnwr3r8h" path="res://scenes/fish.gd" id="1_n6yr6"]
+
 [node name="Fish" type="Node2D" unique_id=142607553]
+script = ExtResource("1_n6yr6")
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=1801416502]
 
 [node name="Eyes" type="AnimatedSprite2D" parent="." unique_id=1139998801]
 
-[node name="Mouth" type="AnimatedSprite2D" parent="." unique_id=726390291]
+[node name="Shadow" type="AnimatedSprite2D" parent="." unique_id=726390291]
 
 [node name="HungerArea" type="AnimatedSprite2D" parent="." unique_id=42909021]
 
