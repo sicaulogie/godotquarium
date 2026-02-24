@@ -65,9 +65,17 @@ func _food_in_range(food: Node2D, radius: float) -> bool:
 
 func _find_nearest_food() -> Node2D:
 	var food_nodes = get_tree().get_nodes_in_group("food")
-	print("Food nodes found: ", food_nodes.size())  # add this
 	var nearest = null
-	var nearest_dist = INF
+	# From Fish.cpp — only react to food within ~100px
+	# Use different awareness radius per hunger level
+	var awareness_radius = 100.0
+	if fish.hunger < 301:
+		awareness_radius = 200.0  # very hungry — wider search
+	elif fish.hunger < 500:
+		awareness_radius = 150.0  # hungry — medium search
+
+	var nearest_dist = awareness_radius  # only find within radius
+
 	for f in food_nodes:
 		if f.get("cant_eat_timer") != null and f.cant_eat_timer > 0:
 			continue
@@ -80,7 +88,7 @@ func _find_nearest_food() -> Node2D:
 	return nearest
 
 func _chase_food(food: Node2D):
-	var speed = 4.0 if fish.hunger < 301 else 3.0
+	var speed = 2.0 if fish.hunger < 301 else 1.5
 	var center = fish.position + Vector2(40, 40)
 	var food_center = food.position + Vector2(20, 20)
 	var diff = food_center - center

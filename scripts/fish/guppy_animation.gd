@@ -72,14 +72,3 @@ func _update_animation():
 
 func _process(_delta):
 	queue_redraw()  # tells Godot to call _draw every frame
-
-func _draw():
-	if not is_instance_valid(fish):
-		return
-	if fish.hunger < 500:
-		# Red square around fish when hungry
-		# matching fish sprite size of 80x80
-		draw_rect(Rect2(-5, -5, 90, 90), Color.RED, false, 2.0)
-	if fish.hunger < 301:
-		# Additional inner square when very hungry
-		draw_rect(Rect2(5, 5, 70, 70), Color.ORANGE, false, 2.0)
