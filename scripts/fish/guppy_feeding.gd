@@ -41,10 +41,10 @@ func _on_food_entered(area: Area2D):
 	food.queue_free()
 
 func _eat_food(food: Node2D):
-	# food parameter reserved for future food type checks
 	fish.hunger += FOOD_NORMAL_RESTORE
 	fish.hunger = min(fish.hunger, FOOD_CAP_NORMAL)
-	fish.eating_timer = 8
+	fish.eating_timer = 16  # 8 ticks at 30fps = 16 ticks at 60fps
+	fish.eat_frame = 0      # reset frame counter
 	_check_growth()
 
 func _check_growth():

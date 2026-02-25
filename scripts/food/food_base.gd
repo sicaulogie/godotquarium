@@ -53,7 +53,7 @@ func _update_position():
 	if not picked_up:
 		# Constant fall at 1.5 per tick — from Food.cpp
 		# Scale for 60fps (original was 30fps)
-		yd += 1.5 * 0.5
+		yd += 0.375
 		xd = clamp(xd, 20.0, 550.0)
 		
 func _update_animation():

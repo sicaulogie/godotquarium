@@ -1,6 +1,7 @@
 extends Node2D
 
 var fish: Node2D
+var special_move_timer: int = 0  # mSpecialMovementStateChangeTimer gate
 
 func _ready():
 	await owner.ready
@@ -11,11 +12,13 @@ func _physics_process(_delta):
 		return
 	_update_state_timer()
 
-	var nearest_food = _find_nearest_food()
-
-	# Always chase food if it exists nearby — matches original behavior
-	if nearest_food:
-		_chase_food(nearest_food)
+	# From Fish.cpp Hungry() line 969 — only chase food when hunger < 500
+	if fish.hunger < 500:
+		var nearest_food = _find_nearest_food()
+		if nearest_food:
+			_hungry_behavior(nearest_food)
+		else:
+			_apply_movement_state()
 	else:
 		_apply_movement_state()
 
@@ -31,6 +34,68 @@ func _update_state_timer():
 		fish.move_state_timer = 0
 		if randi() % 10 == 0:
 			fish.move_state = randi() % 9 + 1
+
+func _hungry_behavior(food: Node2D):
+	# From Fish.cpp HungryBehavior() — gated behind special timer > 2
+	fish.special_timer += 1
+	if fish.special_timer <= 2:
+		return
+	fish.special_timer = 0
+
+	var center_x = fish.position.x + 40.0
+	var center_y = fish.position.y + 40.0
+	var fcx = food.position.x + 20.0  # food center x (food width/2 = 20)
+	var fcy = food.position.y + 20.0  # food center y
+
+	if fish.hunger < 301:
+		# Very hungry — from Fish.cpp lines 1128-1158
+		if center_x > fcx + 8:
+			if fish.vx > -4.0: fish.vx -= 1.3
+		elif center_x < fcx - 8:
+			if fish.vx < 4.0: fish.vx += 1.3
+		elif center_x > fcx + 4:
+			if fish.vx > -4.0: fish.vx -= 0.2
+		elif center_x < fcx - 4:
+			if fish.vx < 4.0: fish.vx += 0.2
+		elif center_x > fcx:
+			if fish.vx > -4.0: fish.vx -= 0.05
+		elif center_x < fcx:
+			if fish.vx < 4.0: fish.vx += 0.05
+
+		if center_y > fcy + 6:
+			if fish.vy > -3.0: fish.vy -= 1.0
+		elif center_y < fcy - 6:
+			if fish.vy < 4.0: fish.vy += 1.3
+		elif center_y > fcy:
+			if fish.vy > -3.0: fish.vy -= 0.5
+		elif center_y < fcy:
+			if fish.vy < 4.0: fish.vy += 0.7
+	else:
+		# Normal hungry — from Fish.cpp lines 1162-1192
+		if center_x > fcx + 8:
+			if fish.vx > -3.0: fish.vx -= 1.0
+		elif center_x < fcx - 8:
+			if fish.vx < 3.0: fish.vx += 1.0
+		elif center_x > fcx + 4:
+			if fish.vx > -3.0: fish.vx -= 0.1
+		elif center_x < fcx - 4:
+			if fish.vx < 3.0: fish.vx += 0.1
+		elif center_x > fcx:
+			if fish.vx > -3.0: fish.vx -= 0.05
+		elif center_x < fcx:
+			if fish.vx < 3.0: fish.vx += 0.05
+
+		if center_y > fcy + 6:
+			if fish.vy > -2.0: fish.vy -= 0.6
+		elif center_y < fcy - 6:
+			if fish.vy < 3.0: fish.vy += 1.0
+		elif center_y > fcy:
+			if fish.vy > -2.0: fish.vy -= 0.3
+		elif center_y < fcy:
+			if fish.vy < 3.0: fish.vy += 0.5
+
+	if fish.vx_abs < 5:
+		fish.vx_abs += 1
 
 func _apply_movement_state():
 	if fish.special_timer <= 39:
@@ -60,22 +125,11 @@ func _apply_movement_state():
 			elif fish.vx > 0.5: fish.vx -= 0.5
 			fish.vx_abs = int(abs(fish.vx))
 
-func _food_in_range(food: Node2D, radius: float) -> bool:
-	return fish.position.distance_to(food.position) < radius
-
 func _find_nearest_food() -> Node2D:
+	# From Fish.cpp FindNearestFood() — NO distance limit, always finds nearest
 	var food_nodes = get_tree().get_nodes_in_group("food")
 	var nearest = null
-	# From Fish.cpp — only react to food within ~100px
-	# Use different awareness radius per hunger level
-	var awareness_radius = 100.0
-	if fish.hunger < 301:
-		awareness_radius = 200.0  # very hungry — wider search
-	elif fish.hunger < 500:
-		awareness_radius = 150.0  # hungry — medium search
-
-	var nearest_dist = awareness_radius  # only find within radius
-
+	var nearest_dist = INF
 	for f in food_nodes:
 		if f.get("cant_eat_timer") != null and f.cant_eat_timer > 0:
 			continue
@@ -86,36 +140,6 @@ func _find_nearest_food() -> Node2D:
 			nearest_dist = d
 			nearest = f
 	return nearest
-
-func _chase_food(food: Node2D):
-	var speed = 2.0 if fish.hunger < 301 else 1.5
-	var center = fish.position + Vector2(40, 40)
-	var food_center = food.position + Vector2(20, 20)
-	var diff = food_center - center
-
-	if diff.x > 8:
-		if fish.vx < speed: fish.vx += 1.3
-	elif diff.x < -8:
-		if fish.vx > -speed: fish.vx -= 1.3
-	elif diff.x > 4:
-		if fish.vx < speed: fish.vx += 0.2
-	elif diff.x < -4:
-		if fish.vx > -speed: fish.vx -= 0.2
-	elif diff.x > 0:
-		if fish.vx < speed: fish.vx += 0.05
-	elif diff.x < 0:
-		if fish.vx > -speed: fish.vx -= 0.05
-
-	if diff.y > 6:
-		if fish.vy < speed: fish.vy += 1.0
-	elif diff.y < -6:
-		if fish.vy > -speed: fish.vy -= 1.0
-	elif diff.y > 0:
-		if fish.vy < speed: fish.vy += 0.5
-	elif diff.y < 0:
-		if fish.vy > -speed: fish.vy -= 0.3
-
-	fish.vx_abs = min(fish.vx_abs + 1, 5)
 
 func _decelerate_near_walls():
 	if fish.position.x > fish.x_max - 5 and fish.vx > 0.1:
@@ -136,16 +160,14 @@ func _detect_direction_change():
 		fish.turn_timer = -20
 	elif fish.prev_vx > 0 and fish.vx < 0:
 		fish.turn_timer = 20
-
 	if fish.turn_timer > 0: fish.turn_timer -= 1
 	elif fish.turn_timer < 0: fish.turn_timer += 1
-
 	if fish.prev_vx != fish.vx and fish.prev_vx != 0 and fish.vx != 0:
 		fish.prev_vx = fish.vx
 
 func _apply_velocity():
-	fish.position.x += fish.vx / fish.speed_mod
-	fish.position.y += fish.vy / fish.speed_mod
-
+	# Scale by 0.5 to match original 30fps timing at 60fps
+	fish.position.x += (fish.vx / fish.speed_mod) * 0.5
+	fish.position.y += (fish.vy / fish.speed_mod) * 0.5
 	fish.position.x = clamp(fish.position.x, fish.x_min, fish.x_max)
 	fish.position.y = clamp(fish.position.y, fish.y_min, fish.y_max)

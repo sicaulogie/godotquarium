@@ -397,7 +397,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3kyyu")
 }],
-"loop": true,
+"loop": false,
 "name": &"large_eat",
 "speed": 5.0
 }, {
@@ -502,7 +502,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_200di")
 }],
-"loop": true,
+"loop": false,
 "name": &"medium_eat",
 "speed": 5.0
 }, {
@@ -607,7 +607,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_bfyg5")
 }],
-"loop": true,
+"loop": false,
 "name": &"small_eat",
 "speed": 5.0
 }, {
