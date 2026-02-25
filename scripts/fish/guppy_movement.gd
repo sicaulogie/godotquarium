@@ -181,8 +181,10 @@ func _check_wall_collision():
 			fish.vy = randf_range(-1.5, -0.5)
 
 	# Persistent top/bottom drift correction — independent of side walls
-	if fish.position.y <= fish.y_min + 10 and fish.vy < 0:
-		fish.vy = randf_range(0.5, 1.0)
+	#if fish.position.y <= fish.y_min + 10 and fish.vy < 0:
+		#fish.vy = randf_range(0.5, 1.0)
+	if fish.position.y < fish.y_min + 80:
+		fish.vy = randf_range(0.5, 1.5)
 	if fish.position.y >= fish.y_max - 10 and fish.vy > 0:
 		fish.vy = randf_range(-1.0, -0.5)
 

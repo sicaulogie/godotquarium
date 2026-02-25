@@ -28,10 +28,10 @@ var eat_frame: int = 0
 var turn_tick: int = 0 
 
 # Tank bounds
-var x_min: float = 20.0
-var x_max: float = 620.0
-var y_min: float = 80.0
-var y_max: float = 420.0
+var x_min: float = 10.0   # was 20
+var x_max: float = 540.0  # was 620
+var y_min: float = 95.0   # was 80
+var y_max: float = 370.0  # was 420
 
 func _ready():
 	if randi() % 2 == 0:
