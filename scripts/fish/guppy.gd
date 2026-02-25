@@ -17,6 +17,7 @@ var vx_abs: int = 1
 var move_state: int = 0
 var move_state_timer: int = 0
 var special_timer: int = 0
+var x_direction: int = 1
 
 # Animation
 var turn_timer: int = 0
@@ -41,5 +42,6 @@ func _ready():
 		vx = 0.1
 		prev_vx = 1.0
 	food_needed_to_grow = randi_range(4, 6)
+	x_direction = 1  # from Fish.cpp Init() mXDirection = 1
 	move_state = randi() % 9 + 1
 	special_timer = randi() % 40

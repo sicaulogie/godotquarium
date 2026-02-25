@@ -6,7 +6,6 @@ func _ready():
 	await owner.ready # Wait for parent to be fully ready
 	fish = get_parent()
 	body = fish.get_node("Body")
-	body.pause()
 
 func _physics_process(_delta):
 	if not is_instance_valid(fish) or not is_instance_valid(body):
@@ -80,14 +79,19 @@ func _update_animation():
 	)
 	body.frame = fish.anim_frame_index
 	if fish.turn_timer == 0:
-		body.flip_h = fish.vx > 0.0
+		if fish.vx < 0.0:
+			body.flip_h = false
+		elif fish.vx > 0.0:
+			body.flip_h = true
+		else:
+			body.flip_h = fish.prev_vx > 0.0
 
 #show hunger level of fish
 func _process(_delta):
 	queue_redraw()
 
 func _draw():
-	if not is_instance_valid(fish):
+	if not is_instance_valid(fish) or not is_instance_valid(body):
 		return
 
 	# Hunger indicator rectangles
