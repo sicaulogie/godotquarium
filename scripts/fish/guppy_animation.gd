@@ -48,37 +48,31 @@ func _update_animation():
 
 	if state == "turn":
 		if fish.turn_timer > 0:
+			body.flip_h = true
 			fish.anim_frame_index = 9 - (fish.turn_timer / 2)
 		else:
+			body.flip_h = false
 			fish.anim_frame_index = 9 + (fish.turn_timer / 2)
 	elif state == "eat":
 		if Engine.get_process_frames() % 2 == 0:
 			fish.eat_frame += 1
-			fish.eating_timer -= 1
-		fish.anim_frame_index = clamp(fish.eat_frame, 0, 9) # eat_frame 0→9 maps to frames 0→9 (open and close mouth naturally)
-	else:  # swim state
-	# From Fish.cpp — tail always moves, minimum increment of 1
-	# vx_abs 0 or 1 = slow tail, 2+ = fast tail
-		if fish.vx_abs < 2:
-			fish.swim_frame_counter += 0.5   # slow at 60fps
+		fish.anim_frame_index = clamp(fish.eat_frame, 0, 9)
+		# Always update flip when not turning
+		if fish.vx < 0.0:
+			body.flip_h = false
+		elif fish.vx > 0.0:
+			body.flip_h = true
 		else:
-			fish.swim_frame_counter += 1.0   # fast at 60fps
-
-		# Guarantee minimum movement even when vx is exactly 0
-		if fish.swim_frame_counter == fish.anim_frame_index * 2:
+			body.flip_h = fish.prev_vx > 0.0
+	else:  # swim
+		if fish.vx_abs < 2:
 			fish.swim_frame_counter += 0.5
-
+		else:
+			fish.swim_frame_counter += 1.0
 		if fish.swim_frame_counter >= 20:
 			fish.swim_frame_counter = 0.0
-
-		fish.anim_frame_index = int(fish.swim_frame_counter) / 2
-
-	fish.anim_frame_index = clamp(
-		fish.anim_frame_index, 0,
-		body.sprite_frames.get_frame_count(body.animation) - 1
-	)
-	body.frame = fish.anim_frame_index
-	if fish.turn_timer == 0:
+		fish.anim_frame_index = int(fish.swim_frame_counter / 2.0)
+		# Always update flip when not turning
 		if fish.vx < 0.0:
 			body.flip_h = false
 		elif fish.vx > 0.0:
@@ -86,15 +80,17 @@ func _update_animation():
 		else:
 			body.flip_h = fish.prev_vx > 0.0
 
-#show hunger level of fish
+	fish.anim_frame_index = clamp(
+		fish.anim_frame_index, 0,
+		body.sprite_frames.get_frame_count(body.animation) - 1
+	)
+	body.frame = fish.anim_frame_index
 func _process(_delta):
 	queue_redraw()
 
 func _draw():
 	if not is_instance_valid(fish) or not is_instance_valid(body):
 		return
-
-	# Hunger indicator rectangles
 
 	# Hunger number below fish — white text with dark outline for readability
 	var hunger_text = str(fish.hunger)

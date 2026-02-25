@@ -39,15 +39,8 @@ func _update_state_timer():
 	# from the original C++ code). This is the "pulse" timer used to trigger physics changes 
 	# like the 40-frame friction pulse
 	fish.move_state_timer += 1 
-	#Increments a second timer to decide if the fish should change its swimming behavior
-	if fish.move_state_timer > 20: # change its mind every 20 frame to avoid constant changing
-		fish.move_state_timer = 0 # reset stage change timer
-		if randi() % 10 == 0: # 10% chance fish switch states
-			fish.move_state = randi() % 9 + 1  # pick a number between 1-9 instead of 0-8
-
+	
 func _hungry_behavior(food: Node2D): # From Fish.cpp HungryBehavior() — gated behind special timer > 2
-	fish.special_timer += 1 # Increments the "pulse" timer
-
 	# If only 1 or 2 frames have passed, don't do anything just exit the function
 	# ensures hunger logic runs every 3rd frame
 	if fish.special_timer <= 2:
@@ -267,12 +260,11 @@ func _check_wall_collision():
 	if hit_bottom:
 		fish.vy = randf_range(-1.5, -0.5)
 
-	# Wide buffer zones near walls — prevent re-entering wall zone
-	if hit_left or hit_right:
-		if fish.position.y < fish.y_min + 80:
-			fish.vy = randf_range(0.5, 1.5)
-		elif fish.position.y > fish.y_max - 80:
-			fish.vy = randf_range(-1.5, -0.5)
+	# Persistent top/bottom drift correction
+	if fish.position.y <= fish.y_min and fish.vy < 0:
+		fish.vy = randf_range(0.5, 1.0)
+	if fish.position.y >= fish.y_max - 10 and fish.vy > 0:
+		fish.vy = randf_range(-1.0, -0.5)
 
 	# Persistent top/bottom drift correction — independent of side walls
 	#if fish.position.y <= fish.y_min + 10 and fish.vy < 0:
@@ -287,8 +279,6 @@ func _detect_direction_change():
 		fish.turn_timer = -20
 	elif fish.prev_vx > 0 and fish.vx < 0:
 		fish.turn_timer = 20
-	if fish.turn_timer > 0: fish.turn_timer -= 1
-	elif fish.turn_timer < 0: fish.turn_timer += 1
 	if fish.prev_vx != fish.vx and fish.prev_vx != 0 and fish.vx != 0:
 		fish.prev_vx = fish.vx
 
