@@ -22,7 +22,7 @@ func _ready():
 	$FoodArea.add_to_group("food") # FoodArea also joins group
 	xd = position.x
 	yd = position.y
-	anim_speed = randi_range(3, 4)
+	anim_speed = randi_range(6, 8)
 	vx = 3.0 if randi() % 2 == 0 else -3.0
 	vy = -2.0  # make sure this is explicitly set
 	fade_timer = 0  # make sure this starts at 0
@@ -53,7 +53,7 @@ func _update_position():
 	if not picked_up:
 		# Constant fall at 1.5 per tick — from Food.cpp
 		# Scale for 60fps (original was 30fps)
-		yd += 0.375
+		yd += 0.75
 		xd = clamp(xd, 20.0, 550.0)
 		
 func _update_animation():

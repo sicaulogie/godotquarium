@@ -1,6 +1,7 @@
 extends Node2D
 
 var fish: Node2D
+var hunger_tick: int = 0  # per-fish timer, not global frame counter
 
 const FOOD_NORMAL_RESTORE = 500
 const FOOD_CAP_NORMAL = 800
@@ -21,10 +22,11 @@ func _physics_process(_delta):
 	_update_hunger()
 
 func _update_hunger():
-	if Engine.get_process_frames() % 2 == 0:
+	hunger_tick += 1
+	if hunger_tick >= 2:  # decrement every 2 physics ticks = 30fps equivalent
+		hunger_tick = 0
 		fish.hunger -= 1
-	# Death disabled for now — just clamp at minimum
-	fish.hunger = max(fish.hunger, -499)
+	fish.hunger = max(fish.hunger, HUNGER_DEAD)
 
 func _can_eat_food(food: Node2D) -> bool:
 	if food.picked_up or food.cant_eat_timer != 0:
@@ -43,8 +45,8 @@ func _on_food_entered(area: Area2D):
 func _eat_food(food: Node2D):
 	fish.hunger += FOOD_NORMAL_RESTORE
 	fish.hunger = min(fish.hunger, FOOD_CAP_NORMAL)
-	fish.eating_timer = 16  # 8 ticks at 30fps = 16 ticks at 60fps
-	fish.eat_frame = 0      # reset frame counter
+	fish.eating_timer = 16
+	fish.eat_frame = 0
 	_check_growth()
 
 func _check_growth():

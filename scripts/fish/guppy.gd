@@ -25,6 +25,7 @@ var growth_timer: int = 0
 var swim_frame_counter: float = 0.0
 var anim_frame_index: int = 0
 var eat_frame: int = 0
+var turn_tick: int = 0 
 
 # Tank bounds
 var x_min: float = 20.0

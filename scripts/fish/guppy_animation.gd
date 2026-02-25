@@ -29,8 +29,13 @@ func _update_animation():
 
 	if fish.turn_timer != 0:
 		state = "turn"
+		fish.turn_tick += 1
+		if fish.turn_tick >= 2:
+			fish.turn_tick = 0
+			if fish.turn_timer > 0: fish.turn_timer -= 1
+			elif fish.turn_timer < 0: fish.turn_timer += 1
 	elif fish.eating_timer > 0:
-		state = "eat" # From Fish.cpp — decrements once per tick at 30fps, at 60fps only decrement every other frame
+		state = "eat"
 		if Engine.get_process_frames() % 2 == 0:
 			fish.eating_timer -= 1
 	else:
@@ -52,13 +57,21 @@ func _update_animation():
 			fish.eat_frame += 1
 			fish.eating_timer -= 1
 		fish.anim_frame_index = clamp(fish.eat_frame, 0, 9) # eat_frame 0→9 maps to frames 0→9 (open and close mouth naturally)
-	else:
+	else:  # swim state
+	# From Fish.cpp — tail always moves, minimum increment of 1
+	# vx_abs 0 or 1 = slow tail, 2+ = fast tail
 		if fish.vx_abs < 2:
-			fish.swim_frame_counter += 0.5
+			fish.swim_frame_counter += 0.5   # slow at 60fps
 		else:
-			fish.swim_frame_counter += 1.0
+			fish.swim_frame_counter += 1.0   # fast at 60fps
+
+		# Guarantee minimum movement even when vx is exactly 0
+		if fish.swim_frame_counter == fish.anim_frame_index * 2:
+			fish.swim_frame_counter += 0.5
+
 		if fish.swim_frame_counter >= 20:
 			fish.swim_frame_counter = 0.0
+
 		fish.anim_frame_index = int(fish.swim_frame_counter) / 2
 
 	fish.anim_frame_index = clamp(

@@ -142,18 +142,49 @@ func _find_nearest_food() -> Node2D:
 	return nearest
 
 func _decelerate_near_walls():
+	# From Fish.cpp lines 514-517 — only decelerate near right and left walls
 	if fish.position.x > fish.x_max - 5 and fish.vx > 0.1:
 		fish.vx -= 0.1
-	if fish.position.x < fish.x_min + 15 and fish.vx < -0.1:
+	if fish.position.x < 15 and fish.vx < -0.1:
 		fish.vx += 0.1
 
 func _check_wall_collision():
-	if fish.position.x >= fish.x_max and fish.vx > 0:
-		fish.vx = -abs(fish.vx) * 0.5
-		fish.move_state = 2
-	if fish.position.x <= fish.x_min and fish.vx < 0:
-		fish.vx = abs(fish.vx) * 0.5
-		fish.move_state = 1
+	fish.position.x = clamp(fish.position.x, fish.x_min, fish.x_max)
+	fish.position.y = clamp(fish.position.y, fish.y_min, fish.y_max)
+
+	var hit_left = fish.position.x <= fish.x_min and fish.vx <= 0
+	var hit_right = fish.position.x >= fish.x_max and fish.vx >= 0
+	var hit_top = fish.position.y <= fish.y_min and fish.vy <= 0
+	var hit_bottom = fish.position.y >= fish.y_max and fish.vy >= 0
+
+	if hit_left:
+		fish.vx = randf_range(0.5, 1.5)
+		fish.move_state = [1, 4, 6][randi() % 3]
+		fish.special_timer = 40
+
+	if hit_right:
+		fish.vx = randf_range(-1.5, -0.5)
+		fish.move_state = [2, 3, 5][randi() % 3]
+		fish.special_timer = 40
+
+	if hit_top:
+		fish.vy = randf_range(0.5, 1.5)
+
+	if hit_bottom:
+		fish.vy = randf_range(-1.5, -0.5)
+
+	# Wide buffer zones near walls — prevent re-entering wall zone
+	if hit_left or hit_right:
+		if fish.position.y < fish.y_min + 80:
+			fish.vy = randf_range(0.5, 1.5)
+		elif fish.position.y > fish.y_max - 80:
+			fish.vy = randf_range(-1.5, -0.5)
+
+	# Persistent top/bottom drift correction — independent of side walls
+	if fish.position.y <= fish.y_min + 10 and fish.vy < 0:
+		fish.vy = randf_range(0.5, 1.0)
+	if fish.position.y >= fish.y_max - 10 and fish.vy > 0:
+		fish.vy = randf_range(-1.0, -0.5)
 
 func _detect_direction_change():
 	if fish.prev_vx < 0 and fish.vx > 0:
@@ -167,6 +198,8 @@ func _detect_direction_change():
 
 func _apply_velocity():
 	# Scale by 0.5 to match original 30fps timing at 60fps
+	if fish.position.x <= fish.x_min + 5 or fish.position.y <= fish.y_min + 5:
+		print("Corner stuck! pos:", fish.position, " vx:", fish.vx, " vy:", fish.vy, " state:", fish.move_state, " special:", fish.special_timer)
 	fish.position.x += (fish.vx / fish.speed_mod) * 0.5
 	fish.position.y += (fish.vy / fish.speed_mod) * 0.5
 	fish.position.x = clamp(fish.position.x, fish.x_min, fish.x_max)
