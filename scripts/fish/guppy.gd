@@ -29,7 +29,8 @@ var turn_tick: int = 0
 
 # Hunger
 var hungry_timer: int = 0
-var hunger_blend: float = 0.0
+var was_hungry: bool = false
+var hunger_anim_timer: int = 0
 var was_eating: bool = false
 
 # Tank bounds
@@ -40,12 +41,12 @@ var y_max: float = 370.0  # was 420
 
 func _ready():
 	if randi() % 2 == 0:
-		vx = -0.1
+		vx = randf_range(-2.0, -0.5)
 		prev_vx = -1.0
 	else:
-		vx = 0.1
+		vx = randf_range(0.5, 2.0)
 		prev_vx = 1.0
 	food_needed_to_grow = randi_range(4, 6)
-	x_direction = 1  # from Fish.cpp Init() mXDirection = 1
+	x_direction = 1
 	move_state = randi() % 9 + 1
 	special_timer = randi() % 40
