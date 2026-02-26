@@ -66,10 +66,10 @@ func _check_growth():
 		if fish.size < 2:
 			fish.size += 1
 			fish.food_ate = 0
-			fish.growth_timer = 10
+			fish.growth_timer = 20
 			return
 	if fish.food_ate >= fish.food_needed_to_grow * 15:
 		if fish.size == 2:
 			fish.size = 3
 			fish.food_ate = 0
-			fish.growth_timer = 10
+			fish.growth_timer = 20

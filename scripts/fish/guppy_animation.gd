@@ -85,6 +85,17 @@ func _update_animation():
 		body.sprite_frames.get_frame_count(body.animation) - 1
 	)
 	body.frame = fish.anim_frame_index
+	if fish.growth_timer > 0:
+		var growth_val: float
+		if fish.growth_timer > 6:
+			growth_val = ((20.0 - fish.growth_timer) * 0.7) / 14.0 + 0.5
+		else:
+			growth_val = (fish.growth_timer * 0.2) / 6.0 + 1.0
+		body.scale = Vector2(growth_val, growth_val)
+		fish.growth_timer -= 1
+	else:
+		body.scale = Vector2(1.0, 1.0)
+	
 func _process(_delta):
 	queue_redraw()
 
