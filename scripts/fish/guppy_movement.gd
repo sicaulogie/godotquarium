@@ -19,8 +19,17 @@ func _physics_process(_delta):
 		#look for nearby food and stores the closeset one in nearest_food variable
 		if nearest_food:
 			if not had_food_last_frame:
+				var food_is_right = nearest_food.position.x > fish.position.x
+				var facing_right = fish.prev_vx > 0.0
+				# Only zero vx if fish is already facing food — no turn needed
+				# If facing wrong direction, keep prev_vx so turn animation fires naturally
 				fish.vx = 0.0
 				fish.vy = 0.0
+				fish.hungry_timer = 0
+				if food_is_right == facing_right:
+					# Already facing food — reset prev_vx to prevent spurious turn
+					fish.prev_vx = 0.0
+				# If facing wrong direction — leave prev_vx alone so turn fires correctly
 				had_food_last_frame = true
 			_hungry_behavior(nearest_food) #turns on hungry behavior when found food
 		else:
@@ -30,7 +39,7 @@ func _physics_process(_delta):
 		had_food_last_frame = false
 		_apply_movement_state()
 
-	#run run wall and velocity checks
+	#run wall and velocity checks
 	_check_wall_collision()
 	_decelerate_near_walls()
 	_detect_direction_change()
@@ -39,10 +48,6 @@ func _physics_process(_delta):
 func _update_state_timer():
 	# keeps track of time for movement logic. This is called every frame inside _physics_process
 	fish.special_timer += 1
-	# Increments the special_timer (which corresponds to mSpecialMovementStateChangeTimer 
-	# from the original C++ code). This is the "pulse" timer used to trigger physics changes 
-	# like the 40-frame friction pulse
-	fish.move_state_timer += 1 
 	
 func _hungry_behavior(food: Node2D):
 	fish.hungry_timer += 1
@@ -148,7 +153,6 @@ func _apply_state_0_to_4():
 				if fish.vx < -1.0: fish.vx += 1.0
 				elif fish.vx > -1.0: fish.vx -= 1.0
 				fish.vx_abs = int(abs(fish.vx))
-			#fish.position.y -= 0.5 / fish.speed_mod
 
 		3:
 			# Swim left, dive down — auto-switch to state 0 below y=240

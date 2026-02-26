@@ -1,11 +1,13 @@
 extends Node2D
 var fish: Node2D
 var body: AnimatedSprite2D
+var body_hungry: AnimatedSprite2D
 
 func _ready():
 	await owner.ready # Wait for parent to be fully ready
 	fish = get_parent()
 	body = fish.get_node("Body")
+	body_hungry = fish.get_node("BodyHungry")
 
 func _physics_process(_delta):
 	if not is_instance_valid(fish) or not is_instance_valid(body):
@@ -23,6 +25,11 @@ func _get_size_prefix() -> String:
 		_: return "small"
 
 func _update_animation():
+	if fish.eating_timer > 0 and not fish.was_eating:
+		fish.eat_frame = 0
+		fish.was_eating = true
+	elif fish.eating_timer == 0:
+		fish.was_eating = false
 	var prefix = _get_size_prefix()
 	var state: String
 
@@ -40,29 +47,13 @@ func _update_animation():
 			fish.eating_timer -= 1
 	else:
 		state = "swim"
-
+		
 	var anim = prefix + "_" + state
-	
 	var is_hungry = fish.hunger < 200
-
-	if is_hungry and not fish.was_hungry:
-		fish.was_hungry = true
-		fish.hunger_anim_timer = 10
-	elif not is_hungry and fish.was_hungry:
-		fish.was_hungry = false
-		fish.hunger_anim_timer = -10
-
-	if fish.hunger_anim_timer > 0:
-		fish.hunger_anim_timer -= 1
-	elif fish.hunger_anim_timer < 0:
-		fish.hunger_anim_timer += 1
-
-	# Switch animation at halfway point — no alpha fade, no transparency
-	if is_hungry and fish.hunger_anim_timer <= 5:
-		anim += "_hungry"
-	elif not is_hungry and fish.hunger_anim_timer < -5:
-		anim += "_hungry"
-
+	# Smoothly blend hunger_blend toward target over 20 frames
+	var target_blend = 1.0 if is_hungry else 0.0
+	fish.hunger_blend = move_toward(fish.hunger_blend, target_blend, 0.05)
+	
 	if body.animation != anim:
 		var old_frame = body.frame
 		body.set_animation(anim)
@@ -82,6 +73,8 @@ func _update_animation():
 	elif state == "eat":
 		if Engine.get_process_frames() % 2 == 0:
 			fish.eat_frame += 1
+		if fish.eat_frame > 9:
+			fish.eat_frame = 9
 		fish.anim_frame_index = clamp(fish.eat_frame, 0, 9)
 		# Always update flip when not turning
 		if fish.vx < 0.0:
@@ -111,6 +104,7 @@ func _update_animation():
 		body.sprite_frames.get_frame_count(body.animation) - 1
 	)
 	body.frame = fish.anim_frame_index
+	
 	if fish.growth_timer > 0:
 		var growth_val: float
 		if fish.growth_timer > 6:
@@ -121,6 +115,13 @@ func _update_animation():
 		fish.growth_timer -= 1
 	else:
 		body.scale = Vector2(1.0, 1.0)
+		body_hungry.scale = Vector2(1.0, 1.0)
+	var hungry_anim = prefix + "_" + state + "_hungry"
+	if body_hungry.sprite_frames.has_animation(hungry_anim):
+		body_hungry.animation = hungry_anim
+		body_hungry.frame = fish.anim_frame_index
+		body_hungry.flip_h = body.flip_h
+		body_hungry.modulate.a = fish.hunger_blend
 	
 func _process(_delta):
 	queue_redraw()

@@ -22,7 +22,7 @@ func _ready():
 	yd = position.y
 	anim_speed = randi_range(6, 8)
 	fade_timer = 0  # make sure this starts at 0
-	cant_eat_timer = 20
+	#cant_eat_timer = 5
 	sprite.pause()
 	sprite.play(get_animation_name())
 

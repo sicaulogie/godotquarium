@@ -3,8 +3,6 @@ extends Node2D
 var fish: Node2D
 var hunger_tick: int = 0  # per-fish timer, not global frame counter
 
-const FOOD_NORMAL_RESTORE = 500
-const FOOD_CAP_NORMAL = 800
 const HUNGER_START_MIN = 600
 const HUNGER_START_MAX = 800
 const HUNGER_DEAD = -499

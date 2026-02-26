@@ -15,7 +15,6 @@ var prev_vx: float = 1.0
 var speed_mod: float = 1.8
 var vx_abs: int = 1
 var move_state: int = 0
-var move_state_timer: int = 0
 var special_timer: int = 0
 var x_direction: int = 1
 
@@ -29,9 +28,9 @@ var eat_frame: int = 0
 var turn_tick: int = 0 
 
 # Hunger
-var hunger_anim_timer: int = 0
 var hungry_timer: int = 0
-var was_hungry: bool = false
+var hunger_blend: float = 0.0
+var was_eating: bool = false
 
 # Tank bounds
 var x_min: float = 10.0   # was 20
