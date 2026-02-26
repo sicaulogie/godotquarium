@@ -13,27 +13,15 @@ func _physics_process(_delta):
 	if not is_instance_valid(fish):
 		return #safety check. If the fish was deleted, stops the script immediately
 	_update_state_timer()
+	if fish.hunger >= 500:  # 只在非追食状态下阻尼
+		fish.vy *= 0.95
 	# From Fish.cpp Hungry() line 969 — only chase food when hunger < 500
 	if fish.hunger < 500:
 		var nearest_food = _find_nearest_food() 
 		#look for nearby food and stores the closeset one in nearest_food variable
 		if nearest_food:
-			if not had_food_last_frame:
-				var food_is_right = nearest_food.position.x > fish.position.x
-				var facing_right = fish.prev_vx > 0.0
-				# Only zero vx if fish is already facing food — no turn needed
-				# If facing wrong direction, keep prev_vx so turn animation fires naturally
-				fish.vx = 0.0
-				fish.vy = 0.0
-				fish.hungry_timer = 0
-				if food_is_right == facing_right:
-					# Already facing food — reset prev_vx to prevent spurious turn
-					fish.prev_vx = 0.0
-				# If facing wrong direction — leave prev_vx alone so turn fires correctly
-				had_food_last_frame = true
 			_hungry_behavior(nearest_food) #turns on hungry behavior when found food
 		else:
-			had_food_last_frame = false
 			_apply_movement_state() #default movement state
 	else:
 		had_food_last_frame = false
