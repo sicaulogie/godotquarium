@@ -43,8 +43,19 @@ func _on_food_entered(area: Area2D):
 	food.queue_free()
 
 func _eat_food(food: Node2D):
-	fish.hunger += FOOD_NORMAL_RESTORE
-	fish.hunger = min(fish.hunger, FOOD_CAP_NORMAL)
+	match food.food_type:
+		0:  # base — brown disc, 1 growth point
+			fish.hunger += 500
+			fish.hunger = min(fish.hunger, 800)
+			fish.food_ate += 1
+		1:  # pellet — green cylinder, 2 growth points
+			fish.hunger += 700
+			fish.hunger = min(fish.hunger, 1000)
+			fish.food_ate += 2
+		2:  # capsule — red/white capsule, 3 growth points
+			fish.hunger += 1000
+			fish.hunger = min(fish.hunger, 1400)
+			fish.food_ate += 3
 	fish.eating_timer = 16
 	fish.eat_frame = 0
 	_check_growth()

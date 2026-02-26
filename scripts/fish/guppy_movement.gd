@@ -126,7 +126,7 @@ func _apply_state_0_to_4():
 				elif fish.vx > 0.5: fish.vx -= 0.5
 				#Horizontal Friction, checks if the fish is moving left or right,change closer to 0
 				fish.vx_abs = int(abs(fish.vx)) #Updates the tail animation speed
-			fish.position.y -= 0.25 / fish.speed_mod #buoyancy prevents the fish from sinking too fast
+			#fish.position.y -= 0.25 / fish.speed_mod #buoyancy prevents the fish from sinking too fast
 
 		1:
 			# Swim right, drift up
@@ -136,7 +136,7 @@ func _apply_state_0_to_4():
 				if fish.vx < 1.0: fish.vx += 1.0 #modify fish speed to around 1
 				elif fish.vx > 1.0: fish.vx -= 1.0
 				fish.vx_abs = int(abs(fish.vx))
-			fish.position.y -= 0.5 / fish.speed_mod #higher buoyancy swimming up
+			#fish.position.y -= 0.5 / fish.speed_mod #higher buoyancy swimming up
 
 		2:
 			# Swim left, drift up
@@ -146,7 +146,7 @@ func _apply_state_0_to_4():
 				if fish.vx < -1.0: fish.vx += 1.0
 				elif fish.vx > -1.0: fish.vx -= 1.0
 				fish.vx_abs = int(abs(fish.vx))
-			fish.position.y -= 0.5 / fish.speed_mod
+			#fish.position.y -= 0.5 / fish.speed_mod
 
 		3:
 			# Swim left, dive down — auto-switch to state 0 below y=240
@@ -260,19 +260,12 @@ func _check_wall_collision():
 	if hit_bottom:
 		fish.vy = randf_range(-1.5, -0.5)
 
-	# Persistent top/bottom drift correction
-	if fish.position.y <= fish.y_min and fish.vy < 0:
-		fish.vy = randf_range(0.5, 1.0)
-	if fish.position.y >= fish.y_max - 10 and fish.vy > 0:
-		fish.vy = randf_range(-1.0, -0.5)
-
-	# Persistent top/bottom drift correction — independent of side walls
-	#if fish.position.y <= fish.y_min + 10 and fish.vy < 0:
-		#fish.vy = randf_range(0.5, 1.0)
-	if fish.position.y < fish.y_min + 80:
-		fish.vy = randf_range(0.5, 1.5)
-	if fish.position.y >= fish.y_max - 10 and fish.vy > 0:
-		fish.vy = randf_range(-1.0, -0.5)
+	# Side wall corner buffer — only when actually hitting a side wall
+	if hit_left or hit_right:
+		if fish.position.y < fish.y_min + 40:
+			fish.vy = randf_range(0.5, 1.0)
+		elif fish.position.y > fish.y_max - 40:
+			fish.vy = randf_range(-1.0, -0.5)
 
 func _detect_direction_change():
 	if fish.prev_vx < 0 and fish.vx > 0:
@@ -283,9 +276,18 @@ func _detect_direction_change():
 		fish.prev_vx = fish.vx
 
 func _apply_velocity():
-	# Scale by 0.5 to match original 30fps timing at 60fps
-	#if fish.position.x <= fish.x_min + 5 or fish.position.y <= fish.y_min + 5:
-		#print("Corner stuck! pos:", fish.position, " vx:", fish.vx, " vy:", fish.vy, " state:", fish.move_state, " special:", fish.special_timer)
+	# From Fish.cpp lines 471-478 — gravity based on horizontal speed
+	# Faster swimming = less sinking, matches original behavior exactly
+	var vx_abs = abs(fish.vx)
+	if vx_abs < 1.0:
+		fish.position.y += (1.0 / fish.speed_mod) * 0.5
+	elif vx_abs < 2.0:
+		fish.position.y += (0.75 / fish.speed_mod) * 0.5
+	elif vx_abs < 3.0:
+		fish.position.y += (0.5 / fish.speed_mod) * 0.5
+	elif vx_abs < 4.0:
+		fish.position.y += (0.25 / fish.speed_mod) * 0.5
+
 	fish.position.x += (fish.vx / fish.speed_mod) * 0.5
 	fish.position.y += (fish.vy / fish.speed_mod) * 0.5
 	fish.position.x = clamp(fish.position.x, fish.x_min, fish.x_max)

@@ -76,4 +76,8 @@ func _explode():
 	queue_free()
 
 func get_animation_name() -> String:
-	return "food_pellet"
+	match food_type:
+		0: return "food_base"
+		1: return "food_pellet"
+		2: return "food_capsule"
+		_: return "food_base"
