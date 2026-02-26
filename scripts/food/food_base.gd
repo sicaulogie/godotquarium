@@ -3,13 +3,11 @@ extends Node2D
 var food_type: int = 0
 var exotic_food_type: int = 0
 var picked_up: bool = false
-var cant_eat_timer: int = 20  # from Food.cpp constructor
+var cant_eat_timer: int = 5  # from Food.cpp constructor
 
 # Internal variables matching Food.cpp
 var xd: float = 0.0
 var yd: float = 0.0
-var vx: float = -3.0   # horizontal launch velocity
-var vy: float = -2.0   # starts moving UP like original
 var anim_counter: int = 0       # m0x178
 var anim_speed: int = 3         # m0x17c, randomized 3-4
 var fade_timer: int = 0         # m0x180
@@ -23,8 +21,6 @@ func _ready():
 	xd = position.x
 	yd = position.y
 	anim_speed = randi_range(6, 8)
-	vx = 3.0 if randi() % 2 == 0 else -3.0
-	vy = -2.0  # make sure this is explicitly set
 	fade_timer = 0  # make sure this starts at 0
 	cant_eat_timer = 20
 	sprite.pause()

@@ -22,9 +22,20 @@ func _input(event):
 			current_food_type = (current_food_type + 1) % 3
 			print("Food type: ", food_type_names[current_food_type])
 
+# Food placement boundaries from Fish.cpp line 620
+const FOOD_X_MIN = 30.0
+const FOOD_X_MAX = 587.0
+const FOOD_Y_MIN = 60.0
+const FOOD_Y_MAX = 400.0
+
 func _drop_food(pos: Vector2):
+	# Clamp to original boundaries — fish will never get pulled to walls
+	var clamped = Vector2(
+		clamp(pos.x, FOOD_X_MIN, FOOD_X_MAX),
+		clamp(pos.y, FOOD_Y_MIN, FOOD_Y_MAX)
+	)
 	var food = FoodScene.instantiate()
-	food.position = pos
+	food.position = clamped
 	food.food_type = current_food_type
 	add_child(food)
 

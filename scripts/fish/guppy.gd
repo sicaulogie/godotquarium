@@ -28,6 +28,11 @@ var anim_frame_index: int = 0
 var eat_frame: int = 0
 var turn_tick: int = 0 
 
+# Hunger
+var hunger_anim_timer: int = 0
+var hungry_timer: int = 0
+var was_hungry: bool = false
+
 # Tank bounds
 var x_min: float = 10.0   # was 20
 var x_max: float = 540.0  # was 620

@@ -5,8 +5,8 @@ var hunger_tick: int = 0  # per-fish timer, not global frame counter
 
 const FOOD_NORMAL_RESTORE = 500
 const FOOD_CAP_NORMAL = 800
-const HUNGER_START_MIN = 400
-const HUNGER_START_MAX = 600
+const HUNGER_START_MIN = 600
+const HUNGER_START_MAX = 800
 const HUNGER_DEAD = -499
 
 func _ready():
@@ -61,7 +61,6 @@ func _eat_food(food: Node2D):
 	_check_growth()
 
 func _check_growth():
-	fish.food_ate += 1
 	if fish.food_ate >= fish.food_needed_to_grow:
 		if fish.size < 2:
 			fish.size += 1

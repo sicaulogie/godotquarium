@@ -26,6 +26,7 @@ func _update_animation():
 	var prefix = _get_size_prefix()
 	var state: String
 
+	# turning animation
 	if fish.turn_timer != 0:
 		state = "turn"
 		fish.turn_tick += 1
@@ -41,8 +42,32 @@ func _update_animation():
 		state = "swim"
 
 	var anim = prefix + "_" + state
+	
+	var is_hungry = fish.hunger < 200
+
+	if is_hungry and not fish.was_hungry:
+		fish.was_hungry = true
+		fish.hunger_anim_timer = 10
+	elif not is_hungry and fish.was_hungry:
+		fish.was_hungry = false
+		fish.hunger_anim_timer = -10
+
+	if fish.hunger_anim_timer > 0:
+		fish.hunger_anim_timer -= 1
+	elif fish.hunger_anim_timer < 0:
+		fish.hunger_anim_timer += 1
+
+	# Switch animation at halfway point — no alpha fade, no transparency
+	if is_hungry and fish.hunger_anim_timer <= 5:
+		anim += "_hungry"
+	elif not is_hungry and fish.hunger_anim_timer < -5:
+		anim += "_hungry"
+
 	if body.animation != anim:
+		var old_frame = body.frame
 		body.set_animation(anim)
+		# Carry frame index over to prevent one-frame blank
+		body.frame = clamp(old_frame, 0, body.sprite_frames.get_frame_count(anim) - 1)
 		if state == "swim":
 			fish.swim_frame_counter = 0.0
 
@@ -53,6 +78,7 @@ func _update_animation():
 		else:
 			body.flip_h = false
 			fish.anim_frame_index = 9 + (fish.turn_timer / 2)
+			
 	elif state == "eat":
 		if Engine.get_process_frames() % 2 == 0:
 			fish.eat_frame += 1

@@ -1,7 +1,7 @@
 extends Node2D
 
 var fish: Node2D
-var special_move_timer: int = 0  # mSpecialMovementStateChangeTimer gate
+var had_food_last_frame: bool = false
 
 func _ready(): #initialize the scene
 	await owner.ready # tells this script to "pause" and wait until the top-level node of the scene
@@ -13,22 +13,26 @@ func _physics_process(_delta):
 	if not is_instance_valid(fish):
 		return #safety check. If the fish was deleted, stops the script immediately
 	_update_state_timer()
-	#calls a custom function that increments the fish's internal clocks
-
 	# From Fish.cpp Hungry() line 969 — only chase food when hunger < 500
 	if fish.hunger < 500:
 		var nearest_food = _find_nearest_food() 
 		#look for nearby food and stores the closeset one in nearest_food variable
 		if nearest_food:
+			if not had_food_last_frame:
+				fish.vx = 0.0
+				fish.vy = 0.0
+				had_food_last_frame = true
 			_hungry_behavior(nearest_food) #turns on hungry behavior when found food
 		else:
+			had_food_last_frame = false
 			_apply_movement_state() #default movement state
 	else:
+		had_food_last_frame = false
 		_apply_movement_state()
 
-	#run functions to check respective conditions
-	_decelerate_near_walls() 
+	#run run wall and velocity checks
 	_check_wall_collision()
+	_decelerate_near_walls()
 	_detect_direction_change()
 	_apply_velocity()
 
@@ -40,12 +44,11 @@ func _update_state_timer():
 	# like the 40-frame friction pulse
 	fish.move_state_timer += 1 
 	
-func _hungry_behavior(food: Node2D): # From Fish.cpp HungryBehavior() — gated behind special timer > 2
-	# If only 1 or 2 frames have passed, don't do anything just exit the function
-	# ensures hunger logic runs every 3rd frame
-	if fish.special_timer <= 2:
+func _hungry_behavior(food: Node2D):
+	fish.hungry_timer += 1
+	if fish.hungry_timer <= 2:
 		return
-	fish.special_timer = 0 #resets gate timer
+	fish.hungry_timer = 0 #resets gate timer
 
 	# Calculates the center point of the fish since godot places node on top left of sprite
 	var center_x = fish.position.x + 40.0
@@ -119,30 +122,29 @@ func _apply_state_0_to_4():
 		0:
 			# Gentle drift — vy=0.5 downward, vx decelerates to 0
 			# yd also drifts up slightly — from Fish.cpp mYD -= 0.25/mSpeedMod
-			fish.vy = 0.5 #vertical velocity, positive means downward therefore sinking
+			#vertical velocity, positive means downward therefore sinking
 			if fish.special_timer > 39: #ensures the horizontal speed only changes once every 40 frames
 				fish.special_timer = 0 #resets timer
+				fish.vy = 0.5
 				if fish.vx < -0.5: fish.vx += 0.5
 				elif fish.vx > 0.5: fish.vx -= 0.5
 				#Horizontal Friction, checks if the fish is moving left or right,change closer to 0
 				fish.vx_abs = int(abs(fish.vx)) #Updates the tail animation speed
-			#fish.position.y -= 0.25 / fish.speed_mod #buoyancy prevents the fish from sinking too fast
 
 		1:
 			# Swim right, drift up
-			fish.vy = -0.5 #swiming up
 			if fish.special_timer > 39:
 				fish.special_timer = 0
+				fish.vy = -0.5 #swiming up
 				if fish.vx < 1.0: fish.vx += 1.0 #modify fish speed to around 1
 				elif fish.vx > 1.0: fish.vx -= 1.0
 				fish.vx_abs = int(abs(fish.vx))
-			#fish.position.y -= 0.5 / fish.speed_mod #higher buoyancy swimming up
 
 		2:
 			# Swim left, drift up
-			fish.vy = -0.5
 			if fish.special_timer > 39:
 				fish.special_timer = 0
+				fish.vy = -0.5  # moved inside pulse block
 				if fish.vx < -1.0: fish.vx += 1.0
 				elif fish.vx > -1.0: fish.vx -= 1.0
 				fish.vx_abs = int(abs(fish.vx))
@@ -188,27 +190,27 @@ func _apply_state_0_to_4():
 				fish.move_state = 0
 
 func _apply_state_5_to_9():
-	# Zigzag pattern — bounces between x=175 and x=250
-	# vy depends on vertical position
-	if fish.position.y >= 115.0: #Checks if the fish is in the middle or bottom of the tank
-		fish.vy = -0.5
-	else:
-		fish.vy = -0.1
-
 	if fish.special_timer > 39:
 		fish.special_timer = 0
+		if fish.position.y >= 115.0:
+			fish.vy = -0.5
+		else:
+			fish.vy = -0.1
+		# Center the zigzag on the tank (x_min=10, x_max=540, center=275)
+		var left_bound = fish.x_min + 100.0   # 110
+		var right_bound = fish.x_max - 100.0  # 440
 		if fish.x_direction == 1:
 			if fish.vx < 0.0: fish.vx += 2.0
 			else: fish.vx += 1.0
 			fish.vx_abs = int(abs(fish.vx))
-			if fish.position.x > 250.0:
+			if fish.position.x > right_bound:
 				fish.x_direction = -1
 				fish.vx -= 2.0
 		elif fish.x_direction == -1:
 			if fish.vx > 0.0: fish.vx -= 2.0
 			else: fish.vx -= 1.0
 			fish.vx_abs = int(abs(fish.vx))
-			if fish.position.x < 175.0:
+			if fish.position.x < left_bound:
 				fish.x_direction = 1
 				fish.vx += 2.0
 
