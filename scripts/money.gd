@@ -23,7 +23,7 @@ var collect_start_y: float = 0.0  # m0x184
 var collect_timer: int = 0        # m0x17c
 
 const BOTTOM = 370.0
-const SIT_TIMEOUT = 20       # frames before disappear starts
+const SIT_TIMEOUT = 50       # frames before disappear starts
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
@@ -51,7 +51,7 @@ func _update_anim_timer():
 	if anim_timer > 79:
 		anim_timer = 0
 	# From original: aVal / 2 % 10 (no pets modifier)
-	anim_frame = (anim_timer / 2) % 10
+	anim_frame = (anim_timer / 4) % 10
 	sprite.frame = anim_frame
 
 func _update_sprite_animation():
