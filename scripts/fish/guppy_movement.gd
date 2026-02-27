@@ -46,27 +46,27 @@ func _hungry_behavior(food: Node2D):
 	var fcy = food.position.y + 20.0
 
 	if fish.hunger < 301:								# Very hungry — from Fish.cpp lines 1128-1158
-		if center_x > fcx + 8: 							# the food is more than 8 pixels away
-			if fish.vx > -4.0: fish.vx -= 1.3 			# high acceleration, add 1.3 to velocity but less than 4
-		elif center_x < fcx - 8:
-			if fish.vx < 4.0: fish.vx += 1.3
+		if center_x > fcx + 6: 							# the food is more than 8 pixels away
+			if fish.vx > -1.5: fish.vx -= 1.0 			# high acceleration, add 1.3 to velocity but less than 4
+		elif center_x < fcx - 6:
+			if fish.vx < 1.5: fish.vx += 1.3
 		elif center_x > fcx + 4: 						# food is closer between 4 and 8 pixels
-			if fish.vx > -4.0: fish.vx -= 0.2 			# medium acceleration, add 0.2
+			if fish.vx > -1.5: fish.vx -= 0.5 			# medium acceleration, add 0.2
 		elif center_x < fcx - 4:
-			if fish.vx < 4.0: fish.vx += 0.2
+			if fish.vx < 1.5: fish.vx += 0.7
 		elif center_x > fcx: 							# fish almost touches food
 			if fish.vx > -4.0: fish.vx -= 0.05 			# add 0.05 to velocity
 		elif center_x < fcx:
 			if fish.vx < 4.0: fish.vx += 0.05
 
 		if center_y > fcy + 6: 							# same as above but vertical
-			if fish.vy > -3.0: fish.vy -= 1.0
+			if fish.vy > -1.5: fish.vy -= 0.6
 		elif center_y < fcy - 6:
-			if fish.vy < 4.0: fish.vy += 1.3
+			if fish.vy < 1.5: fish.vy += 1.0
 		elif center_y > fcy:
-			if fish.vy > -3.0: fish.vy -= 0.5
+			if fish.vy > -1.5: fish.vy -= 0.3
 		elif center_y < fcy:
-			if fish.vy < 4.0: fish.vy += 0.7
+			if fish.vy < 1.5: fish.vy += 0.5
 	else:
 														# Normal hungry — from Fish.cpp lines 1162-1192
 		if center_x > fcx + 8:

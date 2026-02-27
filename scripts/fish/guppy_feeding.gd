@@ -3,14 +3,12 @@ extends Node2D
 var fish: Node2D
 var hunger_tick: int = 0  # per-fish timer, not global frame counter
 
-const HUNGER_START_MIN = 600
-const HUNGER_START_MAX = 800
 const HUNGER_DEAD = -499
 
 func _ready():
 	await owner.ready
 	fish = get_parent()
-	fish.hunger = randi_range(HUNGER_START_MIN, HUNGER_START_MAX)
+	fish.hunger = randi_range(300,500)
 	var area = fish.get_node("FeedingArea")
 	area.area_entered.connect(_on_food_entered)
 
@@ -24,6 +22,8 @@ func _update_hunger():
 	if hunger_tick >= 2:  # decrement every 2 physics ticks = 30fps equivalent
 		hunger_tick = 0
 		fish.hunger -= 1
+		if fish.eating_timer > 0:
+			fish.eating_timer -= 1  # ← this is probably the culprit
 	fish.hunger = max(fish.hunger, HUNGER_DEAD)
 
 func _can_eat_food(food: Node2D) -> bool:
