@@ -8,4 +8,4 @@ script = ExtResource("1_fwoxu")
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=1433594859]
 sprite_frames = ExtResource("1_jdd3c")
-animation = &"small_die"
+animation = &"large_die"

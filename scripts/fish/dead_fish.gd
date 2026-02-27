@@ -6,9 +6,11 @@ var speed_mod: float = 1.8
 var fish_size: int = 0
 var facing_right: bool = true
 
-var death_timer: int = 125   # m0x1a0
-var anim_frame: int = 9      # m0x18c
-var alpha: float = 1.0       # m0x198
+var death_timer: int = 125
+var anim_frame: int = 9
+var anim_tick: int = 0
+var alpha: float = 1.0
+var hit_bottom: bool = false
 
 var x_min = 10.0
 var x_max = 540.0
@@ -18,7 +20,8 @@ var y_max = 380.0
 @onready var body: AnimatedSprite2D = $Body
 
 func _ready():
-	# Adjust initial vy like original constructor
+	# Fix 3 — set flip once at spawn, never touch again
+	body.flip_h = not facing_right
 	if position.x < 115 or vy < -3.0:
 		vy -= 1.0
 	else:
@@ -38,20 +41,29 @@ func _update_timer():
 		queue_free()
 
 func _update_frame():
+	# Hold on frame 6 once fish hits bottom
+	if position.y >= y_max:
+		hit_bottom = true
+
+	if hit_bottom:
+		body.frame = 6
+		return
+
+	# Fix 1 — advance frame only every 2 ticks
+	anim_tick += 1
+	if anim_tick < 2:
+		return
+	anim_tick = 0
+
 	if death_timer > 105:
 		anim_frame = 9 - (death_timer - 106) / 2
-	elif death_timer == 104 or death_timer == 103:
-		anim_frame = 8
-	elif death_timer == 102 or death_timer == 101:
-		anim_frame = 7
+		anim_frame = clamp(anim_frame, 0, 9)
 	else:
-		anim_frame = 6
-	anim_frame = clamp(anim_frame, 0, 9)
-	body.flip_h = !facing_right
+		anim_frame = 9
+
 	body.frame = anim_frame
 
 func _update_physics():
-	# Decelerate vx toward 0
 	if vx < 0.0:
 		vx += 0.03
 		if vx > 0.0: vx = 0.0
@@ -59,18 +71,17 @@ func _update_physics():
 		vx -= 0.03
 		if vx < 0.0: vx = 0.0
 
-	# Sink — vy accelerates toward 2.0
 	if vy < 2.0:
-		vy += 0.05
+		vy += 0.025
 
-	position.x += vx / speed_mod
-	position.y += vy / speed_mod
+	position.x += vx / speed_mod * 0.5
+	position.y += vy / speed_mod * 0.5
 	position.x = clamp(position.x, x_min, x_max)
 	position.y = clamp(position.y, y_min, y_max)
 
 func _update_alpha():
 	if death_timer < 105:
-		alpha -= 0.02
+		alpha -= 0.005
 		alpha = max(alpha, 0.0)
 	body.modulate.a = alpha
 

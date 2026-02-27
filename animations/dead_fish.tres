@@ -235,7 +235,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_umcv2")
 }],
-"loop": true,
+"loop": false,
 "name": &"carnivore_die",
 "speed": 5.0
 }, {
@@ -270,7 +270,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_me63e")
 }],
-"loop": true,
+"loop": false,
 "name": &"king_die",
 "speed": 5.0
 }, {
@@ -305,7 +305,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_j8mbc")
 }],
-"loop": true,
+"loop": false,
 "name": &"large_die",
 "speed": 5.0
 }, {
@@ -340,7 +340,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_kwghq")
 }],
-"loop": true,
+"loop": false,
 "name": &"medium_die",
 "speed": 5.0
 }, {
@@ -375,7 +375,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_p5fdo")
 }],
-"loop": true,
+"loop": false,
 "name": &"small_die",
 "speed": 5.0
 }]

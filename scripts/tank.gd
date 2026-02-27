@@ -3,13 +3,12 @@ extends Node2D
 const FishScene = preload("res://scenes/fish.tscn")
 const FoodScene = preload("res://scenes/food/food.tscn")
 
-var current_food_type: int = 0
+var current_food_type: int = 2
 var food_type_names = ["Base", "Pellet", "Capsule"]
 
 func _ready():
 	_spawn_fish(150, 200)
 	_spawn_fish(300, 250)
-	_spawn_fish(420, 180)
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed:

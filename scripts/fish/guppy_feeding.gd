@@ -4,6 +4,7 @@ var fish: Node2D
 var hunger_tick: int = 0  # per-fish timer, not global frame counter
 
 const HUNGER_DEAD = -499
+const DeadFishScene = preload("res://scenes/dead_fish.tscn")
 
 func _ready():
 	await owner.ready
@@ -25,7 +26,7 @@ func _update_hunger():
 		if fish.eating_timer > 0:
 			fish.eating_timer -= 1  # ← this is probably the culprit
 	fish.hunger = max(fish.hunger, HUNGER_DEAD)
-	if fish.hunger <= HUNGER_DEAD:
+	if fish.hunger <= HUNGER_DEAD and not fish.is_dead:
 		_die()
 
 func _can_eat_food(food: Node2D) -> bool:
@@ -78,7 +79,7 @@ func _die():
 		return
 	fish.is_dead = true
 	# Spawn dead fish at current position with current velocity
-	var dead = DeadFish.instantiate()
+	var dead = DeadFishScene.instantiate()
 	dead.position = fish.position
 	dead.vx = fish.vx
 	dead.vy = fish.vy
