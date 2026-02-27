@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://ichx5jaqxm7l" path="res://scripts/tank.gd" id="1_c4xvs"]
 [ext_resource type="Texture2D" uid="uid://c5vu8qok2yr7f" path="res://assets/tanks/aquarium1.jpg" id="1_qrxud"]
+[ext_resource type="Script" uid="uid://cdp52i533lxeb" path="res://scripts/bubble_manager.gd" id="3_01nm4"]
+[ext_resource type="Script" uid="uid://dkvyko61ej81" path="res://scripts/cheat_manager.gd" id="4_k4vtj"]
 
 [node name="Tank" type="Node2D" unique_id=261431354]
 script = ExtResource("1_c4xvs")
@@ -9,3 +11,9 @@ script = ExtResource("1_c4xvs")
 [node name="Aquarium1" type="Sprite2D" parent="." unique_id=1397345267]
 position = Vector2(320, 240)
 texture = ExtResource("1_qrxud")
+
+[node name="BubbleManager" type="Node2D" parent="." unique_id=1690852350]
+script = ExtResource("3_01nm4")
+
+[node name="CheatManager" type="Node" parent="." unique_id=467329534]
+script = ExtResource("4_k4vtj")

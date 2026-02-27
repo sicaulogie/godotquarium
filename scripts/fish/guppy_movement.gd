@@ -7,24 +7,31 @@ func _ready(): 										# initialize the scene
 	await owner.ready 								# tells this script to "pause" and wait until the top-level node of the scene
 	fish = get_parent() 							# looks up one level in the Node hierarchy and assigns that node to the variable fish
 
-func _physics_process(_delta):						# built-in Godot function. Everything inside here happens every single "tick" of the physics engine. 
-													# The _delta represents the time passed since the last frame (useful for smooth movement).
+func _physics_process(_delta):
 	if not is_instance_valid(fish):
-		return 										# safety check. If the fish was deleted, stops the script immediately
+		return  # safety check must be first
+	
+	if fish.bought_timer > 0:
+		_update_entry()
+		_check_wall_collision()
+		_apply_entry_velocity()
+		return  # skip normal movement while entering
+
 	_update_state_timer()
-	if fish.hunger >= 500:  						# 只在非追食状态下阻尼
+	if fish.hunger >= 500:
 		fish.vy *= 0.95
-	if fish.hunger < 500:							# From Fish.cpp Hungry() line 969 — only chase food when hunger < 500
-		var nearest_food = _find_nearest_food() 	# look for nearby food and stores the closeset one in nearest_food variable
+	if fish.hunger < 500:
+		var nearest_food = _find_nearest_food()
 		if nearest_food:
-			_hungry_behavior(nearest_food) 			# turns on hungry behavior when found food
+			_hungry_behavior(nearest_food)
 		else:
-			_apply_movement_state() 				# default movement state
+			had_food_last_frame = false
+			_apply_movement_state()
 	else:
 		had_food_last_frame = false
 		_apply_movement_state()
 
-	_check_wall_collision()							# run wall and velocity checks
+	_check_wall_collision()
 	_decelerate_near_walls()
 	_detect_direction_change()
 	_apply_velocity()
@@ -266,3 +273,35 @@ func _apply_velocity():									# From Fish.cpp lines 471-478 — gravity based 
 	fish.position.y += (fish.vy / fish.speed_mod) * 0.5
 	fish.position.x = clamp(fish.position.x, fish.x_min, fish.x_max)
 	fish.position.y = clamp(fish.position.y, fish.y_min, fish.y_max)
+
+func _update_entry():
+	fish.bought_timer -= 1
+	fish.entry_vy *= 0.9  # decelerate 10% per frame — from Fish.cpp line 458
+
+	# Spawn bubbles while falling — from Fish.cpp lines 496-533
+	if fish.bought_timer >= 31:
+		var chance = 1 if fish.bought_timer > 80 else 2
+		if randi() % chance == 0:
+			_spawn_entry_bubbles()
+
+func _spawn_entry_bubbles():
+	var tank = fish.get_parent()
+	var bubble_mgr = tank.get_node("BubbleManager")
+	if fish.size == 0:  # small
+		if randi() % 2 == 0:
+			var bx = fish.position.x + 40 - randi() % 30
+			var by = fish.position.y + 40 - randi() % 30
+			bubble_mgr._spawn_bubble_at(bx, by)
+	else:  # medium/large
+		bubble_mgr._spawn_bubble_at(
+			fish.position.x + 45 - randi() % 40,
+			fish.position.y + 45 - randi() % 40
+		)
+		bubble_mgr._spawn_bubble_at(
+			fish.position.x + 45 - randi() % 40,
+			fish.position.y + 45 - randi() % 40
+		)
+
+func _apply_entry_velocity():
+	fish.position.y += (fish.entry_vy / fish.speed_mod) * 1
+	fish.position.y = clamp(fish.position.y, -100.0, fish.y_max)

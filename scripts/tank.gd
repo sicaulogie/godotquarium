@@ -7,8 +7,8 @@ var current_food_type: int = 2
 var food_type_names = ["Base", "Pellet", "Capsule"]
 
 func _ready():
-	_spawn_fish(150, 200)
-	_spawn_fish(300, 250)
+	_spawn_fish(150, 200, false)
+	_spawn_fish(300, 250, false)
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed:
@@ -38,10 +38,16 @@ func _drop_food(pos: Vector2):
 	food.food_type = current_food_type
 	add_child(food)
 
-func _spawn_fish(x: float, y: float):
+func _spawn_fish(x: float, y: float, bought: bool = true):
 	var fish = FishScene.instantiate()
-	fish.position = Vector2(x, y)
+	fish.position = Vector2(x, 30.0 if bought else y)
 	add_child(fish)
+	if bought:
+		fish.entry_vy = randi_range(9, 11)
+		fish.bought_timer = randi_range(90, 108)
+	else:
+		fish.bought_timer = 0  # already in tank, no entry
+		fish.position = Vector2(x, y)
 
 # Display current food type on screen
 func _draw():

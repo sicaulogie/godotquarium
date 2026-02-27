@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://bt1el4ow2lbqn"]
+
+[ext_resource type="Script" uid="uid://dj20rakjel45d" path="res://scripts/bubble.gd" id="1_pm753"]
+[ext_resource type="Texture2D" uid="uid://cjceub0xvp3qb" path="res://assets/ui/bubbles.png" id="2_b4vvx"]
+
+[node name="Bubble" type="Node2D" unique_id=226993692]
+script = ExtResource("1_pm753")
+
+[node name="Sprite" type="Sprite2D" parent="." unique_id=317053213]
+texture = ExtResource("2_b4vvx")
+hframes = 5

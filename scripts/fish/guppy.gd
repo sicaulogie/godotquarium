@@ -6,13 +6,15 @@ enum Size { SMALL = 0, MEDIUM = 1, LARGE = 2, KING = 3 }
 var hunger: int = 0
 var size: int = Size.MEDIUM			#starting growth 0
 var food_ate: int = 0				#how much food was eaten
-var food_needed_to_grow: int = 0	#target food goal for grow up
+var food_needed_to_grow: int = 0		#target food goal for grow up
 var is_dead: bool = false
 
 									# Movement
 var vx: float = 0.1					#default horizontal speed
 var vy: float = 0.0					#vertical speed
 var prev_vx: float = 1.0
+var bought_timer: int = 0
+var entry_vy: float = 0.0
 									#previous frame horizontal velocity for turn detection and facing direction fallback
 									#positive = default facing right, negative = left
 var speed_mod: float = 1.8			#speed multiplyer
