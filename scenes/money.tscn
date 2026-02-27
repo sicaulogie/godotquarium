@@ -11,7 +11,7 @@ script = ExtResource("1_dia0j")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2027453803]
 sprite_frames = ExtResource("1_v42d4")
-animation = &"star"
+animation = &"gold"
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1370518762]
 

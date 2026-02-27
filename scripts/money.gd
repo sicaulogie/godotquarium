@@ -25,7 +25,7 @@ var collect_timer: int = 0        # m0x17c
 const BOTTOM = 370.0
 const SIT_TIMEOUT = 20       # frames before disappear starts
 
-@onready var sprite: AnimatedSprite2D = $Sprite
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 func _ready():
 	add_to_group("coins")
