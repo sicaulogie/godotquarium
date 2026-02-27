@@ -1,4 +1,3 @@
-```markdown
 # Godotquarium
 
 This repository is an attempt to implement the original 25-year-old C++ *Insaniquarium* logic into the Godot Engine. 
@@ -34,6 +33,3 @@ This project prioritizes functional parity with the original C++ codebase.
 * [ ] Debug `Coin.cpp` logic and integration with the game board.
 * [ ] Add Wadsworth pet hiding logic (Invisible/Shadow 0.0 alpha).
 * [ ] Refactor movement logic to prevent "tunneling" over food pellets.
-
-
-```
