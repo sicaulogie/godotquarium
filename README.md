@@ -1,6 +1,6 @@
 # Godotquarium
 
-This repository is an attempt to implement the original 25-year-old C++ *Insaniquarium* logic into the Godot Engine. 
+Insaniquarium in Godot
 
 ---
 
