@@ -19,7 +19,7 @@ func _get_size_prefix() -> String:
 		0: return "small"
 		1: return "medium"
 		2: return "large"
-		3: return "large"
+		3: return "king"
 		_: return "small"
 
 func _update_animation():
@@ -134,14 +134,12 @@ func _draw():
 	if not is_instance_valid(fish) or not is_instance_valid(body):
 		return
 
-	# Hunger number below fish — white text with dark outline for readability
-	var hunger_text = str(fish.hunger)
-	draw_string(
-		ThemeDB.fallback_font,
-		Vector2(0, 0),   # below the 80px sprite
-		hunger_text,
-		HORIZONTAL_ALIGNMENT_CENTER,
-		60,
-		12,
-		Color.WHITE
-	)
+	# Hunger number
+	draw_string(ThemeDB.fallback_font, Vector2(0, 0),
+		str(fish.hunger), HORIZONTAL_ALIGNMENT_CENTER, 60, 12, Color.WHITE)
+
+	# Feed progress counter — shows food_ate / food_needed_to_grow
+	var remaining = fish.food_needed_to_grow - fish.food_ate
+	var progress_text = str(remaining) + " feeds to grow"
+	draw_string(ThemeDB.fallback_font, Vector2(0, 14),
+		progress_text, HORIZONTAL_ALIGNMENT_CENTER, 60, 10, Color.YELLOW)

@@ -12,7 +12,7 @@ func _ready():
 	# Pick type 0-2 (re-roll if 3, matching original logic)
 	bubble_type = randi() % 4
 	if bubble_type == 3:
-		bubble_type = randi() % 4
+		bubble_type = randi() % 3  # re-roll to 0-2
 	sprite.frame = bubble_type
 
 	# Pick speed

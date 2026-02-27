@@ -3,11 +3,13 @@ extends Node2D
 const COIN_SILVER = 0
 const COIN_GOLD = 1
 const COIN_STAR = 2
+const COIN_DIAMOND = 3
 
 const COIN_VALUES = {
 	COIN_SILVER: 15,
 	COIN_GOLD: 35,
 	COIN_STAR: 40,
+	COIN_DIAMOND: 200,
 }
 
 var coin_type: int = COIN_SILVER
@@ -59,6 +61,7 @@ func _update_sprite_animation():
 		COIN_SILVER: sprite.animation = "silver"
 		COIN_GOLD:   sprite.animation = "gold"
 		COIN_STAR:   sprite.animation = "star"
+		COIN_DIAMOND: sprite.animation = "diamond"
 
 # --- Falling physics ---
 

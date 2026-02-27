@@ -2,6 +2,7 @@ extends Node2D
 
 var fish: Node2D
 var had_food_last_frame: bool = false
+var entry_bubble_tick: int = 0
 
 func _ready(): 										# initialize the scene
 	await owner.ready 								# tells this script to "pause" and wait until the top-level node of the scene
@@ -276,10 +277,17 @@ func _apply_velocity():									# From Fish.cpp lines 471-478 — gravity based 
 
 func _update_entry():
 	fish.bought_timer -= 1
-	fish.entry_vy *= 0.9  # decelerate 10% per frame — from Fish.cpp line 458
+	fish.entry_vy *= 0.949  # decelerate 10% per frame — from Fish.cpp line 458
 
 	# Spawn bubbles while falling — from Fish.cpp lines 496-533
-	if fish.bought_timer >= 31:
+	if fish.bought_timer >= 62:
+		# Gate to 30fps rate — only spawn every 2 physics ticks
+		entry_bubble_tick += 1
+		if entry_bubble_tick < 2:
+			return
+		entry_bubble_tick = 0
+		
+		# chance=1 (always) when timer>80, chance=2 (50%) when 62-80
 		var chance = 1 if fish.bought_timer > 80 else 2
 		if randi() % chance == 0:
 			_spawn_entry_bubbles()
@@ -287,21 +295,36 @@ func _update_entry():
 func _spawn_entry_bubbles():
 	var tank = fish.get_parent()
 	var bubble_mgr = tank.get_node("BubbleManager")
-	if fish.size == 0:  # small
+	var body = fish.get_node("Body")
+	
+	# Get half-size offset assuming centered sprite
+	var half_w = 40.0  # default for 80px sprite
+	var half_h = 40.0
+	if body and body.sprite_frames:
+		var frame_tex = body.sprite_frames.get_frame_texture(body.animation, body.frame)
+		if frame_tex:
+			half_w = frame_tex.get_width() * 0.5 * body.scale.x
+			half_h = frame_tex.get_height() * 0.5 * body.scale.y
+
+	if fish.size == 0:
+		# Small — one bubble, 50% chance, from top-left origin
 		if randi() % 2 == 0:
-			var bx = fish.position.x + 40 - randi() % 30
-			var by = fish.position.y + 40 - randi() % 30
-			bubble_mgr._spawn_bubble_at(bx, by)
-	else:  # medium/large
+			bubble_mgr._spawn_bubble_at(
+				fish.position.x - half_w + randf_range(10, 40),
+				fish.position.y - half_h + randf_range(10, 40)
+			)
+	else:
+		# Medium/large — exactly 2 bubbles per eligible frame
 		bubble_mgr._spawn_bubble_at(
-			fish.position.x + 45 - randi() % 40,
-			fish.position.y + 45 - randi() % 40
+			fish.position.x - half_w + randf_range(-5, 55),
+			fish.position.y - half_h + randf_range(-5, 55)
 		)
 		bubble_mgr._spawn_bubble_at(
-			fish.position.x + 45 - randi() % 40,
-			fish.position.y + 45 - randi() % 40
+			fish.position.x - half_w + randf_range(5, 45),
+			fish.position.y - half_h + randf_range(5, 45)
 		)
 
+
 func _apply_entry_velocity():
-	fish.position.y += (fish.entry_vy / fish.speed_mod) * 1
+	fish.position.y += (fish.entry_vy / fish.speed_mod) * 0.5
 	fish.position.y = clamp(fish.position.y, -100.0, fish.y_max)

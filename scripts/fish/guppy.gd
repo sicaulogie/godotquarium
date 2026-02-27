@@ -4,7 +4,7 @@ enum Size { SMALL = 0, MEDIUM = 1, LARGE = 2, KING = 3 }
 
 									# Core state, everything starts from 0
 var hunger: int = 0
-var size: int = Size.MEDIUM			#starting growth 0
+var size: int = Size.LARGE			#starting growth 0
 var food_ate: int = 0				#how much food was eaten
 var food_needed_to_grow: int = 0		#target food goal for grow up
 var is_dead: bool = false
@@ -31,6 +31,7 @@ var swim_frame_counter: float = 0.0 #calculate which frame of swimming animation
 var anim_frame_index: int = 0		#determine which frame of sprite is shown
 var eat_frame: int = 0				#track eating animation
 var turn_tick: int = 0 				#control turning speed
+var growth_transition_timer: int = 0
 
 
 # Hunger
@@ -52,7 +53,7 @@ func _ready():
 	else:
 		vx = randf_range(0.5, 2.0)			#moving right
 		prev_vx = 1.0
-	food_needed_to_grow = randi_range(4, 6)	#random number between 4,5,6 for required growth
+	#food_needed_to_grow = randi_range(4, 6)	#random number between 4,5,6 for required growth
 	x_direction = 1							#started facing right
 	move_state = randi() % 9 + 1			#assign move state 0-9
 	special_timer = randi() % 40			#random starting frame

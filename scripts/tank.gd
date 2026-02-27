@@ -43,7 +43,7 @@ func _spawn_fish(x: float, y: float, bought: bool = true):
 	fish.position = Vector2(x, 30.0 if bought else y)
 	add_child(fish)
 	if bought:
-		fish.entry_vy = randi_range(9, 11)
+		fish.entry_vy = randi_range(18, 22)
 		fish.bought_timer = randi_range(90, 108)
 	else:
 		fish.bought_timer = 0  # already in tank, no entry

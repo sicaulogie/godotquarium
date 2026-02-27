@@ -8,11 +8,16 @@ const DeadFishScene = preload("res://scenes/dead_fish.tscn")
 const CoinScene = preload("res://scenes/money.tscn")
 var coin_timer: int = 0
 const COIN_INTERVAL = 400  # roughly every 400 ticks
+const DEBUG_FOOD_NEEDED_TO_GROW = -2
 
 func _ready():
 	await owner.ready
 	fish = get_parent()
-	fish.hunger = randi_range(600,800)
+	fish.hunger = randi_range(500,800)
+	if DEBUG_FOOD_NEEDED_TO_GROW == -1:
+		fish.food_needed_to_grow = randi_range(4, 6)
+	else:
+		fish.food_needed_to_grow = DEBUG_FOOD_NEEDED_TO_GROW
 	coin_timer = randi_range(0, COIN_INTERVAL)
 	var area = fish.get_node("FeedingArea")
 	area.area_entered.connect(_on_food_entered)
@@ -32,6 +37,7 @@ func _drop_coin():
 	match fish.size:
 		1: coin.coin_type = 0  # COIN_SILVER — medium
 		2: coin.coin_type = 1  # COIN_GOLD — large
+		3: coin.coin_type = 3
 		_: return  # small fish don't drop coins
 	fish.get_parent().add_child(coin)
 
