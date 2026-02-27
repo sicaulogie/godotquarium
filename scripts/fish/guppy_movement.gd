@@ -174,9 +174,8 @@ func _apply_state_5_to_9():
 			fish.vy = -0.5
 		else:
 			fish.vy = -0.1
-														# Center the zigzag on the tank (x_min=10, x_max=540, center=275)
-		var left_bound = fish.x_min + 100.0   # 110
-		var right_bound = fish.x_max - 100.0  # 440
+		var left_bound = fish.x_min + 100.0   			# 110 Center the zigzag on the tank (x_min=10, x_max=540, center=275)
+		var right_bound = fish.x_max - 100.0  			# 440
 		if fish.x_direction == 1:
 			if fish.vx < 0.0: fish.vx += 2.0
 			else: fish.vx += 1.0
@@ -191,8 +190,8 @@ func _apply_state_5_to_9():
 			if fish.position.x < left_bound:
 				fish.x_direction = 1
 				fish.vx += 2.0
-
-func _find_nearest_food() -> Node2D:					# From Fish.cpp FindNearestFood() — NO distance limit, always finds nearest
+														# From Fish.cpp FindNearestFood() — NO distance limit, always finds nearest
+func _find_nearest_food() -> Node2D:
 	var food_nodes = get_tree().get_nodes_in_group("food")
 	var nearest = null
 	var nearest_dist = INF
