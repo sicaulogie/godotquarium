@@ -8,7 +8,7 @@ const HUNGER_DEAD = -499
 func _ready():
 	await owner.ready
 	fish = get_parent()
-	fish.hunger = randi_range(300,500)
+	fish.hunger = randi_range(-200,-400)
 	var area = fish.get_node("FeedingArea")
 	area.area_entered.connect(_on_food_entered)
 
@@ -25,6 +25,8 @@ func _update_hunger():
 		if fish.eating_timer > 0:
 			fish.eating_timer -= 1  # ← this is probably the culprit
 	fish.hunger = max(fish.hunger, HUNGER_DEAD)
+	if fish.hunger <= HUNGER_DEAD:
+		_die()
 
 func _can_eat_food(food: Node2D) -> bool:
 	if food.picked_up or food.cant_eat_timer != 0:
@@ -70,3 +72,18 @@ func _check_growth():
 			fish.size = 3
 			fish.food_ate = 0
 			fish.growth_timer = 20
+
+func _die():
+	if fish.is_dead:
+		return
+	fish.is_dead = true
+	# Spawn dead fish at current position with current velocity
+	var dead = DeadFishScene.instantiate()
+	dead.position = fish.position
+	dead.vx = fish.vx
+	dead.vy = fish.vy
+	dead.speed_mod = fish.speed_mod
+	dead.fish_size = fish.size
+	dead.facing_right = fish.prev_vx > 0.0
+	fish.get_parent().add_child(dead)
+	fish.queue_free()

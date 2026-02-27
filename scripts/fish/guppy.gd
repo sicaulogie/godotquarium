@@ -7,6 +7,7 @@ var hunger: int = 0
 var size: int = Size.SMALL			#starting growth 0
 var food_ate: int = 0				#how much food was eaten
 var food_needed_to_grow: int = 0	#target food goal for grow up
+var is_dead: bool = false
 
 									# Movement
 var vx: float = 0.1					#default horizontal speed
@@ -28,6 +29,7 @@ var swim_frame_counter: float = 0.0 #calculate which frame of swimming animation
 var anim_frame_index: int = 0		#determine which frame of sprite is shown
 var eat_frame: int = 0				#track eating animation
 var turn_tick: int = 0 				#control turning speed
+
 
 # Hunger
 var hungry_timer: int = 0
