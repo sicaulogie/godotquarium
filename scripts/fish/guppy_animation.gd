@@ -23,13 +23,13 @@ func _get_size_prefix() -> String:
 		_: return "small"
 
 func _update_animation():
-	if fish.eating_timer > 0 and not fish.was_eating:
-		fish.eat_frame = 0
-		fish.was_eating = true
-	elif fish.eating_timer == 0:
-		fish.was_eating = false
-	var prefix = _get_size_prefix()
-	var state: String
+	if fish.eating_timer > 0 and not fish.was_eating:	#ensure fish is eating and first frame
+		fish.eat_frame = 0								#eating animation start from frame 0
+		fish.was_eating = true							#prevent from resetting animation
+	elif fish.eating_timer == 0:						#eating timer finishes
+		fish.was_eating = false							#resets variable so next food found identifies as new eating event
+	var prefix = _get_size_prefix()						#get current size
+	var state: String									#hold current state (swim, eat, turn)
 
 	# turning animation
 	if fish.turn_timer != 0:
