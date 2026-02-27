@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://daat2grhdblmm"]
 
+[ext_resource type="Script" uid="uid://onjy4pb2cgtw" path="res://scripts/fish/dead_fish.gd" id="1_fwoxu"]
 [ext_resource type="SpriteFrames" uid="uid://c44uon5m7dew7" path="res://animations/dead_fish.tres" id="1_jdd3c"]
 
 [node name="DeadFish" type="Node2D" unique_id=2012254630]
+script = ExtResource("1_fwoxu")
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=1433594859]
 sprite_frames = ExtResource("1_jdd3c")

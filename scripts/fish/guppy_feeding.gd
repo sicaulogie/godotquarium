@@ -78,7 +78,7 @@ func _die():
 		return
 	fish.is_dead = true
 	# Spawn dead fish at current position with current velocity
-	var dead = DeadFishScene.instantiate()
+	var dead = DeadFish.instantiate()
 	dead.position = fish.position
 	dead.vx = fish.vx
 	dead.vy = fish.vy
