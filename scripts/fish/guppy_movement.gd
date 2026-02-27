@@ -192,8 +192,7 @@ func _apply_state_5_to_9():
 				fish.x_direction = 1
 				fish.vx += 2.0
 
-func _find_nearest_food() -> Node2D:
-	# From Fish.cpp FindNearestFood() — NO distance limit, always finds nearest
+func _find_nearest_food() -> Node2D:					# From Fish.cpp FindNearestFood() — NO distance limit, always finds nearest
 	var food_nodes = get_tree().get_nodes_in_group("food")
 	var nearest = null
 	var nearest_dist = INF
