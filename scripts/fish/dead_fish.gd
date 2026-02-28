@@ -1,3 +1,4 @@
+class_name DeadFish
 extends Node2D
 
 var vx: float = 0.0
@@ -90,6 +91,7 @@ func _apply():
 	match fish_size:
 		1: prefix = "medium"
 		2: prefix = "large"
+		3: prefix = "king"
 	var anim = prefix + "_die"
 	if body.sprite_frames.has_animation(anim):
 		body.animation = anim

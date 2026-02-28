@@ -1,3 +1,4 @@
+class_name Coin
 extends Node2D
 
 const COIN_SILVER = 0

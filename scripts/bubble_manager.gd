@@ -1,9 +1,10 @@
+class_name BubbleManager
 extends Node2D
 
 const BubbleScene = preload("res://scenes/bubble.tscn")
 
 const MAX_BUBBLES = 10
-const SPAWN_CHANCE = 10  # percent per frame
+const SPAWN_CHANCE = 5  # percent per frame
 
 # Tank bounds from original
 const BUBBLE_X_MIN = 0

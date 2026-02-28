@@ -14,7 +14,7 @@ script = ExtResource("1_n6yr6")
 
 [node name="Body" type="AnimatedSprite2D" parent="." unique_id=726390291]
 sprite_frames = ExtResource("2_8g0i4")
-animation = &"small_swim_hungry"
+animation = &"small_eat_hungry"
 
 [node name="Movement" type="Node2D" parent="." unique_id=370579010]
 script = ExtResource("3_pgks6")

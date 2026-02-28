@@ -1,3 +1,4 @@
+class_name GuppyMovement
 extends Node2D
 
 var fish: Node2D
@@ -204,9 +205,9 @@ func _find_nearest_food() -> Node2D:
 	var nearest = null
 	var nearest_dist = INF
 	for f in food_nodes:
-		if f.get("cant_eat_timer") != null and f.cant_eat_timer > 0:
+		if not f is FoodBase:
 			continue
-		if f.get("picked_up") != null and f.picked_up:
+		if f.cant_eat_timer > 0 or f.picked_up:
 			continue
 		var d = fish.position.distance_to(f.position)
 		if d < nearest_dist:

@@ -1,3 +1,4 @@
+class_name GuppyFeeding
 extends Node2D
 
 var fish: Node2D
@@ -8,12 +9,12 @@ const DeadFishScene = preload("res://scenes/dead_fish.tscn")
 const CoinScene = preload("res://scenes/money.tscn")
 var coin_timer: int = 0
 const COIN_INTERVAL = 400  # roughly every 400 ticks
-const DEBUG_FOOD_NEEDED_TO_GROW = -2
+const DEBUG_FOOD_NEEDED_TO_GROW = 0
 
 func _ready():
 	await owner.ready
 	fish = get_parent()
-	fish.hunger = randi_range(500,800)
+	fish.hunger = randi_range(400,500)
 	if DEBUG_FOOD_NEEDED_TO_GROW == -1:
 		fish.food_needed_to_grow = randi_range(4, 6)
 	else:
@@ -58,6 +59,8 @@ func _can_eat_food(food: Node2D) -> bool:
 func _on_food_entered(area: Area2D):
 	if not area.is_in_group("food"):
 		return
+	if fish.hunger >= 500:  # ignore food when not hungry
+		return
 	var food = area.get_parent()
 	if not _can_eat_food(food):
 		return
@@ -65,6 +68,9 @@ func _on_food_entered(area: Area2D):
 	food.queue_free()
 
 func _eat_food(food: Node2D):
+	var hungry_before = fish.hunger < 0
+	fish.was_hungry = hungry_before
+	fish.hunger_anim_timer = 0
 	match food.food_type:
 		0:  # base — brown disc, 1 growth point
 			fish.hunger += 500
@@ -80,20 +86,25 @@ func _eat_food(food: Node2D):
 			fish.food_ate += 3
 	fish.eating_timer = 16
 	fish.eat_frame = 0
-	_check_growth()
+	_check_growth(hungry_before)
 
-func _check_growth():
+func _check_growth(hungry_before: bool = false):
 	if fish.food_ate >= fish.food_needed_to_grow:
 		if fish.size < 2:
 			fish.size += 1
 			fish.food_ate = 0
 			fish.growth_timer = 20
+			fish.is_king_transition = false
 			return
-	if fish.food_ate >= fish.food_needed_to_grow * 15:
+	if fish.food_ate >= fish.food_needed_to_grow * 8:
 		if fish.size == 2:
-			fish.size = 3
 			fish.food_ate = 0
-			fish.growth_timer = 20
+			fish.growth_timer = 0
+			fish.growth_transition_timer = 20
+			fish.is_king_transition = true
+			fish.was_hungry_at_transition = hungry_before
+			fish.eating_timer = 0
+			fish.was_eating = false
 
 func _die():
 	if fish.is_dead:

@@ -1,3 +1,4 @@
+class_name FoodBase
 extends Node2D
 
 var food_type: int = 0

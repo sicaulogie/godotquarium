@@ -1,3 +1,4 @@
+class_name Guppy
 extends Node2D
 
 enum Size { SMALL = 0, MEDIUM = 1, LARGE = 2, KING = 3 }
@@ -8,6 +9,8 @@ var size: int = Size.LARGE			#starting growth 0
 var food_ate: int = 0				#how much food was eaten
 var food_needed_to_grow: int = 0		#target food goal for grow up
 var is_dead: bool = false
+var is_king_transition: bool = false
+var was_hungry_at_transition: bool = false
 
 									# Movement
 var vx: float = 0.1					#default horizontal speed
@@ -32,7 +35,6 @@ var anim_frame_index: int = 0		#determine which frame of sprite is shown
 var eat_frame: int = 0				#track eating animation
 var turn_tick: int = 0 				#control turning speed
 var growth_transition_timer: int = 0
-
 
 # Hunger
 var hungry_timer: int = 0
