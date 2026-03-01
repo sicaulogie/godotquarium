@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://cc76ldiyspt0g"]
 
-[ext_resource type="Script" uid="uid://6jjrrmttn2wr" path="res://scripts/money.gd" id="1_dia0j"]
-[ext_resource type="SpriteFrames" uid="uid://bjnt610aml6g3" path="res://animations/money.tres" id="1_v42d4"]
+[ext_resource type="Script" uid="uid://6jjrrmttn2wr" path="res://scripts/coin.gd" id="1_dia0j"]
+[ext_resource type="SpriteFrames" uid="uid://bjnt610aml6g3" path="res://animations/coin.tres" id="1_v42d4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dia0j"]
 size = Vector2(72, 72)
 
-[node name="Money" type="Node2D" unique_id=1877719644]
+[node name="Coin" type="Node2D" unique_id=1877719644]
 script = ExtResource("1_dia0j")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2027453803]

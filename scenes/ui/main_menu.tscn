@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://busypcpkh6idu"]
+
+[ext_resource type="Script" uid="uid://bjk40anq1atro" path="res://scripts/ui/main_menu.gd" id="1_sl1te"]
+[ext_resource type="Texture2D" uid="uid://clw727sp62k16" path="res://assets/ui/selectorback.jpg" id="2_fe2o3"]
+
+[node name="MainMenu" type="Node2D" unique_id=546673024]
+script = ExtResource("1_sl1te")
+
+[node name="Selectorback" type="Sprite2D" parent="." unique_id=1774156899]
+position = Vector2(320, 240)
+texture = ExtResource("2_fe2o3")
+
+[node name="PlayButton" type="Button" parent="." unique_id=560958438]
+offset_left = 395.0
+offset_top = 52.0
+offset_right = 544.0
+offset_bottom = 113.0
+text = "Play"
+
+[connection signal="pressed" from="PlayButton" to="." method="_on_button_pressed"]

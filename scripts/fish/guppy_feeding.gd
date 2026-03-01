@@ -6,7 +6,7 @@ var hunger_tick: int = 0  # per-fish timer, not global frame counter
 
 const HUNGER_DEAD = -499
 const DeadFishScene = preload("res://scenes/dead_fish.tscn")
-const CoinScene = preload("res://scenes/money.tscn")
+const CoinScene = preload("res://scenes/coin.tscn")
 var coin_timer: int = 0
 const COIN_INTERVAL = 400  # roughly every 400 ticks
 const DEBUG_FOOD_NEEDED_TO_GROW = 0
