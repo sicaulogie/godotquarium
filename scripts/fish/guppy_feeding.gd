@@ -9,7 +9,7 @@ const DeadFishScene = preload("res://scenes/dead_fish.tscn")
 const CoinScene = preload("res://scenes/coin.tscn")
 var coin_timer: int = 0
 const COIN_INTERVAL = 400  # roughly every 400 ticks
-const DEBUG_FOOD_NEEDED_TO_GROW = 0
+const DEBUG_FOOD_NEEDED_TO_GROW = -1
 
 func _ready():
 	await owner.ready
