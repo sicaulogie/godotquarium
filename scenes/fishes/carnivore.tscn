@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://cr8ul2quux8a1"]
+
+[ext_resource type="Script" uid="uid://dbf8p6kk0my48" path="res://scripts/fish/carnivore.gd" id="1_ee4vj"]
+[ext_resource type="SpriteFrames" uid="uid://buihmnjfwb67v" path="res://animations/carnivore.tres" id="2_2wgqn"]
+[ext_resource type="Script" uid="uid://07ils42tgblj" path="res://scripts/fish/carnivore_movement.gd" id="3_qhuet"]
+[ext_resource type="Script" uid="uid://bsukrtmdc4ft6" path="res://scripts/fish/carnivore_animation.gd" id="4_tppkx"]
+[ext_resource type="Script" uid="uid://ds2gr1fb6bjyn" path="res://scripts/fish/carnivore_feeding.gd" id="5_hmyl6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ee4vj"]
+radius = 30.0
+
+[node name="Carnivore" type="Node2D" unique_id=532288716]
+script = ExtResource("1_ee4vj")
+
+[node name="Body" type="AnimatedSprite2D" parent="." unique_id=596892097]
+sprite_frames = ExtResource("2_2wgqn")
+animation = &"turn_hungry"
+
+[node name="HitArea" type="Area2D" parent="." unique_id=1066115146]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitArea" unique_id=79131574]
+shape = SubResource("CircleShape2D_ee4vj")
+
+[node name="Movement" type="Node2D" parent="." unique_id=1980081010]
+script = ExtResource("3_qhuet")
+
+[node name="Animation" type="Node2D" parent="." unique_id=494840185]
+script = ExtResource("4_tppkx")
+
+[node name="Feeding" type="Node2D" parent="." unique_id=1828136080]
+script = ExtResource("5_hmyl6")
