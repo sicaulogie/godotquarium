@@ -25,13 +25,10 @@ func _input(event):
 				if cheat_mode: _spawn_carnivore()
 
 func _spawn_guppy():
-	get_parent()._spawn_fish(randi_range(20, 540), randi_range(105, 370))
+	FishSpawner.spawn_guppy(get_parent())
 
 func _spawn_carnivore():
-	var carnivore = CarnivoreScene.instantiate()
-	# Spawn at top like a bought fish — matches guppy entry behavior
-	carnivore.position = Vector2(randi_range(60, 500), -40)
-	get_parent().add_child(carnivore)
+	FishSpawner.spawn_carnivore(get_parent())
 
 func _spawn_bubbles():
 	var count = randi_range(2, 4)

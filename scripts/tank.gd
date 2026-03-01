@@ -1,6 +1,6 @@
 extends Node2D
 
-const FishScene = preload("res://scenes/fish.tscn")
+const FishScene = preload("res://scenes/fishes/guppy.tscn")
 const FoodScene = preload("res://scenes/food/food.tscn")
 
 var current_food_type: int = 2

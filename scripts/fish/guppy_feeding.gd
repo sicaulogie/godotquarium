@@ -38,13 +38,25 @@ func _can_eat_food(food: Node2D) -> bool:
 func _on_food_entered(area: Area2D):
 	if not area.is_in_group("food"):
 		return
-	if fish.hunger >= 500:
+	if fish.hunger >= 500 or pending_target != null:
 		return
 	var food = area.get_parent()
 	if not _can_eat_food(food):
 		return
-	_eat_food(food)
-	food.queue_free()
+	food.picked_up = true
+	pending_target = food
+	eat_windup_timer = EAT_WINDUP_FRAMES
+	fish.eating_timer = 16
+	fish.eat_frame = 0
+
+func _confirm_eat(target: Node2D):
+	_eat_food(target)
+	target.queue_free()
+
+func _on_eat_missed():
+	if is_instance_valid(pending_target):
+		pending_target.picked_up = false
+	super._on_eat_missed()
 
 func _eat_food(food: Node2D):
 	var hungry_before = fish.hunger < 0

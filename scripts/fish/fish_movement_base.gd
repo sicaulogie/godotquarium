@@ -2,6 +2,7 @@ class_name FishMovementBase
 extends Node2D
 
 var fish: Node2D
+var entry_bubble_tick: int = 0
 
 func _ready():
 	await owner.ready
@@ -10,6 +11,14 @@ func _ready():
 func _physics_process(_delta):
 	if not is_instance_valid(fish):
 		return
+
+	# Entry system — shared for all bought fish
+	if fish.bought_timer > 0:
+		_update_entry()
+		_check_wall_collision()
+		_apply_entry_velocity()
+		return
+
 	_update_state_timer()
 	if fish.hunger >= 500:
 		fish.vy *= 0.95
@@ -180,3 +189,38 @@ func _apply_velocity():
 	fish.position.y += (fish.vy / fish.speed_mod) * 0.5
 	fish.position.x = clamp(fish.position.x, fish.x_min, fish.x_max)
 	fish.position.y = clamp(fish.position.y, fish.y_min, fish.y_max)
+
+# --- Entry system — shared for all bought fish ---
+
+func _update_entry():
+	fish.bought_timer -= 1
+	fish.entry_vy *= 0.949
+	if fish.bought_timer >= 62:
+		entry_bubble_tick += 1
+		if entry_bubble_tick < 2:
+			return
+		entry_bubble_tick = 0
+		var chance = 1 if fish.bought_timer > 80 else 2
+		if randi() % chance == 0:
+			_spawn_entry_bubbles()
+
+func _spawn_entry_bubbles():
+	var bubble_mgr = fish.get_parent().get_node("BubbleManager")
+	var body = fish.get_node("Body")
+	var half_w = 30.0
+	var half_h = 30.0
+	if body and body.sprite_frames:
+		var frame_tex = body.sprite_frames.get_frame_texture(body.animation, body.frame)
+		if frame_tex:
+			half_w = frame_tex.get_width() * 0.5 * body.scale.x
+			half_h = frame_tex.get_height() * 0.5 * body.scale.y
+	var count = 1 if (half_w < 30) else 2
+	for i in count:
+		bubble_mgr._spawn_bubble_at(
+			fish.position.x + randf_range(-half_w, half_w),
+			fish.position.y + randf_range(-half_h, half_h)
+		)
+
+func _apply_entry_velocity():
+	fish.position.y += (fish.entry_vy / fish.speed_mod) * 0.5
+	fish.position.y = clamp(fish.position.y, -100.0, fish.y_max)

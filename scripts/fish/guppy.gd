@@ -19,9 +19,6 @@ var eating_timer: int = 0
 var eat_frame: int = 0
 var was_eating: bool = false
 
-# Entry animation
-var bought_timer: int = 0
-var entry_vy: float = 0.0
-
 func _ready():
-	super._ready()  # runs FishBase._ready() for shared init
+	add_to_group("guppies")  # allows carnivore to find guppies
+	super._ready()

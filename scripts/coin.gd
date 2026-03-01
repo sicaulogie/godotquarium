@@ -113,9 +113,7 @@ func _update_collect():
 		queue_free()
 
 func _receive_money():
-	# Hook this up to your money/score system later
-	var value = COIN_VALUES.get(coin_type, 0)
-	print("Collected coin worth: ", value)
+	pass
 
 # --- Input ---
 func _on_area_2d_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:

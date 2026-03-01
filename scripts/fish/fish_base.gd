@@ -15,6 +15,10 @@ var move_state: int = 0
 var special_timer: int = 0
 var x_direction: int = 1
 
+# Entry — shared for all bought fish
+var bought_timer: int = 0
+var entry_vy: float = 0.0
+
 # Animation
 var turn_timer: int = 0
 var turn_tick: int = 0

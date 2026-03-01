@@ -2,7 +2,6 @@ class_name GuppyMovement
 extends FishMovementBase
 
 var had_food_last_frame: bool = false
-var entry_bubble_tick: int = 0
 
 func _physics_process(_delta):
 	if not is_instance_valid(fish):

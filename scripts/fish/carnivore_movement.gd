@@ -14,6 +14,16 @@ func _find_nearest_target() -> Node2D:
 			nearest = g
 	return nearest
 
+func _physics_process(_delta):
+	if not is_instance_valid(fish):
+		return
+	if fish.bought_timer > 0:
+		_update_entry()
+		_check_wall_collision()
+		_apply_entry_velocity()
+		return
+	super._physics_process(_delta)
+
 # Override — BiFish acceleration values from BiFish.cpp HungryBehavior()
 func _hungry_behavior(target: Node2D):
 	fish.hungry_timer += 1

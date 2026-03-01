@@ -6,6 +6,7 @@ var vy: float = 0.0
 var speed_mod: float = 1.8
 var fish_size: int = 0
 var facing_right: bool = true
+var fish_type: String = ""
 
 var death_timer: int = 125
 var anim_frame: int = 9
@@ -87,11 +88,15 @@ func _update_alpha():
 	body.modulate.a = alpha
 
 func _apply():
-	var prefix = "small"
-	match fish_size:
-		1: prefix = "medium"
-		2: prefix = "large"
-		3: prefix = "king"
+	var prefix: String
+	if fish_type != "":
+		prefix = fish_type
+	else:
+		match fish_size:
+			1: prefix = "medium"
+			2: prefix = "large"
+			3: prefix = "king"
+			_: prefix = "small"
 	var anim = prefix + "_die"
 	if body.sprite_frames.has_animation(anim):
 		body.animation = anim
