@@ -31,16 +31,16 @@ func _hungry_behavior(target: Node2D):
 		return
 	fish.hungry_timer = 0
 
-	var center_x = fish.position.x + 40.0
-	var center_y = fish.position.y + 40.0
-	var tcx = target.position.x + 40.0
-	var tcy = target.position.y + 40.0
+	var center_x = fish.position.x
+	var center_y = fish.position.y
+	var tcx = target.position.x
+	var tcy = target.position.y
 
 	if fish.hunger < 301:
 		if center_x > tcx + 44:
-			if fish.vx > -4.0: fish.vx -= 1.3
+			if fish.vx > -6.0: fish.vx -= 1.5
 		elif center_x < tcx + 36:
-			if fish.vx < 4.0: fish.vx += 1.3
+			if fish.vx < 6.0: fish.vx += 1.5
 		elif center_x > tcx + 42:
 			if fish.vx > -4.0: fish.vx -= 0.2
 		elif center_x < tcx - 38:
@@ -51,9 +51,9 @@ func _hungry_behavior(target: Node2D):
 			if fish.vx < 4.0: fish.vx += 0.05
 
 		if center_y > tcy + 40:
-			if fish.vy > -4.0: fish.vy -= 1.3
+			if fish.vy > -6.0: fish.vy -= 1.5
 		elif center_y < tcy + 40:
-			if fish.vy < 4.0: fish.vy += 1.3
+			if fish.vy < 6.0: fish.vy += 1.5
 	else:
 		if center_x > tcx + 44:
 			if fish.vx > -3.0: fish.vx -= 1.0

@@ -40,16 +40,10 @@ func _get_eat_radius() -> float:
 func _confirm_eat(target: Node2D):
 	_eat_guppy(target)
 
-func _eat_guppy(guppy: Guppy):
-	# From BiFish::OnFoodAte() — +700 hunger, cap 1000
+func _eat_guppy(guppy: Node2D):
 	fish.hunger += 700
 	fish.hunger = min(fish.hunger, 1000)
-	# Trigger eat animation
 	fish.eating_timer = 16
 	fish.eat_frame = 0
-	# Kill the guppy through its own feeding script
-	var guppy_feeding = guppy.get_node("Feeding")
-	if guppy_feeding:
-		guppy_feeding._die()
-	else:
-		guppy.queue_free()
+	guppy.is_dead = true
+	guppy.queue_free()

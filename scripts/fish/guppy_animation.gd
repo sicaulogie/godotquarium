@@ -126,14 +126,10 @@ func _update_scale():
 	else:
 		body.scale = Vector2(1.0, 1.0)
 
-func _process(_delta):
-	queue_redraw()
-
 func _draw():
-	if not is_instance_valid(fish) or not is_instance_valid(body):
+	super._draw()
+	if not is_instance_valid(fish):
 		return
-	draw_string(ThemeDB.fallback_font, Vector2(0, 0),
-		str(fish.hunger), HORIZONTAL_ALIGNMENT_CENTER, 60, 12, Color.WHITE)
 	var remaining = fish.food_needed_to_grow - fish.food_ate
 	draw_string(ThemeDB.fallback_font, Vector2(0, 14),
 		str(remaining), HORIZONTAL_ALIGNMENT_CENTER, 60, 10, Color.YELLOW)

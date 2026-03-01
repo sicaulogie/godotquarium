@@ -98,3 +98,12 @@ func _update_frame_index():
 		body.sprite_frames.get_frame_count(body.animation) - 1
 	)
 	body.frame = fish.anim_frame_index
+
+func _process(_delta):
+	queue_redraw()
+
+func _draw():
+	if not is_instance_valid(fish):
+		return
+	draw_string(ThemeDB.fallback_font, Vector2(0, 0),
+		str(fish.hunger), HORIZONTAL_ALIGNMENT_CENTER, 60, 12, Color.WHITE)
