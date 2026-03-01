@@ -25,7 +25,7 @@ var collect_start_x: float = 0.0  # m0x180
 var collect_start_y: float = 0.0  # m0x184
 var collect_timer: int = 0        # m0x17c
 
-const BOTTOM = 370.0
+const BOTTOM = 420.0
 const SIT_TIMEOUT = 50       # frames before disappear starts
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -85,6 +85,9 @@ func collect():
 	collect_start_x = position.x
 	collect_start_y = position.y
 	collect_timer = 0
+	var ui = get_tree().get_first_node_in_group("ui")
+	if ui:
+		ui.add_money(COIN_VALUES[coin_type])
 
 func _update_collect():
 	# From original lines 330-344:
@@ -119,3 +122,7 @@ func _on_area_2d_input_event(_viewport: Node, event: InputEvent, _shape_idx: int
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			collect()
+			
+func _collect():
+	var ui = get_tree().get_first_node_in_group("ui")
+	ui.add_money(COIN_VALUES[coin_type])

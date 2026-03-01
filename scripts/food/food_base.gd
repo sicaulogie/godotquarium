@@ -56,7 +56,7 @@ func _update_animation():					# From Food.cpp m0x178 counter
 	sprite.frame = anim_counter / anim_speed
 
 func _check_bottom():						# From Food.cpp — food fades at bottom, star potion explodes
-	if yd > 410.0:
+	if yd > 420.0:
 		if food_type == 3:
 			_explode()
 		elif fade_timer < 1:

@@ -4,6 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://c5vu8qok2yr7f" path="res://assets/tanks/aquarium1.jpg" id="1_qrxud"]
 [ext_resource type="Script" uid="uid://cdp52i533lxeb" path="res://scripts/bubble_manager.gd" id="3_01nm4"]
 [ext_resource type="Script" uid="uid://dkvyko61ej81" path="res://scripts/cheat_manager.gd" id="4_k4vtj"]
+[ext_resource type="PackedScene" uid="uid://bw88cm6qe22d4" path="res://scenes/ui/ui_adventure.tscn" id="5_1ixom"]
+[ext_resource type="Script" uid="uid://clq2xrxay35hl" path="res://scripts/ui/ui_adventure.gd" id="6_5dv58"]
 
 [node name="Tank" type="Node2D" unique_id=261431354]
 script = ExtResource("1_c4xvs")
@@ -17,3 +19,6 @@ script = ExtResource("3_01nm4")
 
 [node name="CheatManager" type="Node" parent="." unique_id=467329534]
 script = ExtResource("4_k4vtj")
+
+[node name="UiAdventure" parent="." unique_id=616869255 instance=ExtResource("5_1ixom")]
+script = ExtResource("6_5dv58")

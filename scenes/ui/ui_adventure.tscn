@@ -1,3 +1,51 @@
 [gd_scene format=3 uid="uid://bw88cm6qe22d4"]
 
-[node name="UiAdventure" type="Node2D" unique_id=616869255]
+[ext_resource type="Texture2D" uid="uid://cw88e8eng1h0w" path="res://assets/ui/menubar.png" id="1_8gvcn"]
+[ext_resource type="Shader" uid="uid://cexk242l2agro" path="res://shaders/ui_adventure.gdshader" id="2_60sf4"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_60sf4"]
+shader = ExtResource("2_60sf4")
+
+[node name="UiAdventure" type="CanvasLayer" unique_id=808587976]
+
+[node name="Control" type="Control" parent="." unique_id=2020037029]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Control" unique_id=256072916]
+material = SubResource("ShaderMaterial_60sf4")
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 80.0
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Control/SubViewportContainer" unique_id=2056507075]
+transparent_bg = true
+size = Vector2i(640, 80)
+
+[node name="MenuBar" type="TextureRect" parent="Control/SubViewportContainer/SubViewport" unique_id=1859938683]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 75.0
+grow_horizontal = 2
+mouse_filter = 2
+texture = ExtResource("1_8gvcn")
+expand_mode = 2
+
+[node name="MenuButton" type="Button" parent="Control" unique_id=874866166]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="WalletLabel" type="Label" parent="Control" unique_id=2119661034]
+layout_mode = 0
+offset_left = 546.0
+offset_top = 38.0
+offset_right = 619.0
+offset_bottom = 61.0
+horizontal_alignment = 2

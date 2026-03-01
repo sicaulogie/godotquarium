@@ -29,13 +29,12 @@ const FOOD_Y_MAX = 400.0
 
 func _drop_food(pos: Vector2):
 	# Clamp to original boundaries — fish will never get pulled to walls
-	var clamped = Vector2(
-		clamp(pos.x, FOOD_X_MIN, FOOD_X_MAX),
-		clamp(pos.y, FOOD_Y_MIN, FOOD_Y_MAX)
-	)
+	if pos.x < 30 or pos.x > 587:
+		return
+	if pos.y < 60 or pos.y > 400:
+		return
 	var food = FoodScene.instantiate()
-	food.position = clamped
-	food.food_type = current_food_type
+	food.position = Vector2(pos.x - 10, pos.y - 10)
 	add_child(food)
 
 func _spawn_fish(x: float, y: float, bought: bool = true):
@@ -63,3 +62,12 @@ func _draw():
 
 func _process(_delta):
 	queue_redraw()
+
+func _setup_mode(mode: String):
+	match mode:
+		"adventure":
+			pass
+
+func _load_ui(path: String):
+	var ui = load(path).instantiate()
+	add_child(ui)
