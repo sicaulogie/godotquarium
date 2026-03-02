@@ -7,8 +7,9 @@ var current_food_type: int = 2
 var food_type_names = ["Base", "Pellet", "Capsule"]
 
 func _ready():
-	_spawn_fish(150, 200, false)
-	_spawn_fish(300, 250, false)
+	#_spawn_fish(150, 200, false)
+	#_spawn_fish(300, 250, false)
+	pass
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed:
@@ -22,10 +23,10 @@ func _input(event):
 			print("Food type: ", food_type_names[current_food_type])
 
 # Food placement boundaries from Fish.cpp line 620
-const FOOD_X_MIN = 30.0
-const FOOD_X_MAX = 587.0
+const FOOD_X_MIN = 20.0
+const FOOD_X_MAX = 620.0
 const FOOD_Y_MIN = 60.0
-const FOOD_Y_MAX = 400.0
+const FOOD_Y_MAX = 460.0
 
 func _drop_food(pos: Vector2):
 	# Clamp to original boundaries — fish will never get pulled to walls

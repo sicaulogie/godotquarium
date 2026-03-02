@@ -30,65 +30,21 @@ func _find_nearest_target() -> Node2D:
 			nearest = f
 	return nearest
 
-# Override — guppy-specific acceleration values from Fish.cpp
-func _hungry_behavior(food: Node2D):
-	fish.hungry_timer += 1
-	if fish.hungry_timer <= 2:
-		return
-	fish.hungry_timer = 0
+# In GuppyMovement.gd
 
-	var center_x = fish.position.x + 40.0
-	var center_y = fish.position.y + 40.0
-	var fcx = food.position.x + 20.0
-	var fcy = food.position.y + 20.0
-
-	if fish.hunger < 301:
-		if center_x > fcx + 6:
-			if fish.vx > -1.5: fish.vx -= 1.0
-		elif center_x < fcx - 6:
-			if fish.vx < 1.5: fish.vx += 1.3
-		elif center_x > fcx + 4:
-			if fish.vx > -1.5: fish.vx -= 0.5
-		elif center_x < fcx - 4:
-			if fish.vx < 1.5: fish.vx += 0.7
-		elif center_x > fcx:
-			if fish.vx > -4.0: fish.vx -= 0.05
-		elif center_x < fcx:
-			if fish.vx < 4.0: fish.vx += 0.05
-
-		if center_y > fcy + 6:
-			if fish.vy > -1.5: fish.vy -= 0.6
-		elif center_y < fcy - 6:
-			if fish.vy < 1.5: fish.vy += 1.0
-		elif center_y > fcy:
-			if fish.vy > -1.5: fish.vy -= 0.3
-		elif center_y < fcy:
-			if fish.vy < 1.5: fish.vy += 0.5
-	else:
-		if center_x > fcx + 8:
-			if fish.vx > -3.0: fish.vx -= 1.0
-		elif center_x < fcx - 8:
-			if fish.vx < 3.0: fish.vx += 1.0
-		elif center_x > fcx + 4:
-			if fish.vx > -3.0: fish.vx -= 0.1
-		elif center_x < fcx - 4:
-			if fish.vx < 3.0: fish.vx += 0.1
-		elif center_x > fcx:
-			if fish.vx > -3.0: fish.vx -= 0.05
-		elif center_x < fcx:
-			if fish.vx < 3.0: fish.vx += 0.05
-
-		if center_y > fcy + 6:
-			if fish.vy > -2.0: fish.vy -= 0.6
-		elif center_y < fcy - 6:
-			if fish.vy < 3.0: fish.vy += 1.0
-		elif center_y > fcy:
-			if fish.vy > -2.0: fish.vy -= 0.3
-		elif center_y < fcy:
-			if fish.vy < 3.0: fish.vy += 0.5
-
-	if fish.vx_abs < 5:
-		fish.vx_abs += 1
+func _get_movement_cfg():
+	return {
+		"starving": {
+			"accel_x_far": 0.65, "accel_x_mid": 0.2, "accel_x_near": 0.05, "cap_x": 8.0,
+			"accel_y_far": 0.5, "accel_y_far_down": 1.3, "accel_y_near": 0.5, "accel_y_near_down": 0.7,
+			"cap_y_up": 3.0, "cap_y_down": 4.0
+		},
+		"satisfied": {
+			"accel_x_far": 0.5, "accel_x_mid": 0.1, "accel_x_near": 0.05, "cap_x": 6.0,
+			"accel_y_far": 0.3, "accel_y_far_down": 1.0, "accel_y_near": 0.3, "accel_y_near_down": 0.5,
+			"cap_y_up": 2.0, "cap_y_down": 4.0
+		}
+	}
 
 # --- Entry system (guppy-only) ---
 
@@ -104,34 +60,6 @@ func _update_entry():
 		var chance = 1 if fish.bought_timer > 80 else 2
 		if randi() % chance == 0:
 			_spawn_entry_bubbles()
-
-func _spawn_entry_bubbles():
-	var tank = fish.get_parent()
-	var bubble_mgr = tank.get_node("BubbleManager")
-	var body = fish.get_node("Body")
-	var half_w = 40.0
-	var half_h = 40.0
-	if body and body.sprite_frames:
-		var frame_tex = body.sprite_frames.get_frame_texture(body.animation, body.frame)
-		if frame_tex:
-			half_w = frame_tex.get_width() * 0.5 * body.scale.x
-			half_h = frame_tex.get_height() * 0.5 * body.scale.y
-
-	if fish.size == 0:
-		if randi() % 2 == 0:
-			bubble_mgr._spawn_bubble_at(
-				fish.position.x - half_w + randf_range(10, 40),
-				fish.position.y - half_h + randf_range(10, 40)
-			)
-	else:
-		bubble_mgr._spawn_bubble_at(
-			fish.position.x - half_w + randf_range(-5, 55),
-			fish.position.y - half_h + randf_range(-5, 55)
-		)
-		bubble_mgr._spawn_bubble_at(
-			fish.position.x - half_w + randf_range(5, 45),
-			fish.position.y - half_h + randf_range(5, 45)
-		)
 
 func _apply_entry_velocity():
 	fish.position.y += (fish.entry_vy / fish.speed_mod) * 0.5

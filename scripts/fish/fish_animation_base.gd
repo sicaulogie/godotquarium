@@ -31,7 +31,7 @@ func _update_state():
 	if fish.turn_timer != 0:
 		current_state = "turn"
 		fish.turn_tick += 1
-		if fish.turn_tick >= 2:
+		if fish.turn_tick >= 1:
 			fish.turn_tick = 0
 			if fish.turn_timer > 0: fish.turn_timer -= 1
 			elif fish.turn_timer < 0: fish.turn_timer += 1
@@ -52,18 +52,18 @@ func _update_hunger_suffix():
 	var is_hungry = fish.hunger < 0
 	if is_hungry and not fish.was_hungry:
 		fish.was_hungry = true
-		fish.hunger_anim_timer = 10
+		fish.hunger_anim_timer = 20
 	elif not is_hungry and fish.was_hungry:
 		fish.was_hungry = false
-		fish.hunger_anim_timer = -10
+		fish.hunger_anim_timer = -20
 	if fish.hunger_anim_timer > 0:
 		fish.hunger_anim_timer -= 1
 	elif fish.hunger_anim_timer < 0:
 		fish.hunger_anim_timer += 1
 
-	if fish.was_hungry and fish.hunger_anim_timer <= 5:
+	if fish.was_hungry and fish.hunger_anim_timer <= 10:
 		current_anim += "_hungry"
-	elif not fish.was_hungry and fish.hunger_anim_timer < -5:
+	elif not fish.was_hungry and fish.hunger_anim_timer < -10:
 		current_anim += "_hungry"
 
 	if body.animation != current_anim:

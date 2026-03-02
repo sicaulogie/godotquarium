@@ -8,10 +8,12 @@ func _find_nearest_target() -> Node2D:
 	for g in get_tree().get_nodes_in_group("guppies"):
 		if not g is Guppy or g.is_dead:
 			continue
-		var d = fish.position.distance_to(g.position)
+		var d = fish.position.distance_squared_to(g.position)
 		if d < nearest_dist:
 			nearest_dist = d
 			nearest = g
+	if nearest_dist > 10000:
+		return null
 	return nearest
 
 func _physics_process(_delta):
@@ -24,58 +26,16 @@ func _physics_process(_delta):
 		return
 	super._physics_process(_delta)
 
-# Override — BiFish acceleration values from BiFish.cpp HungryBehavior()
-func _hungry_behavior(target: Node2D):
-	fish.hungry_timer += 1
-	if fish.hungry_timer <= 2:
-		return
-	fish.hungry_timer = 0
-
-	var center_x = fish.position.x
-	var center_y = fish.position.y
-	var tcx = target.position.x
-	var tcy = target.position.y
-
-	if fish.hunger < 301:
-		if center_x > tcx + 44:
-			if fish.vx > -6.0: fish.vx -= 1.5
-		elif center_x < tcx + 36:
-			if fish.vx < 6.0: fish.vx += 1.5
-		elif center_x > tcx + 42:
-			if fish.vx > -4.0: fish.vx -= 0.2
-		elif center_x < tcx - 38:
-			if fish.vx < 4.0: fish.vx += 0.2
-		elif center_x > tcx + 40:
-			if fish.vx > -4.0: fish.vx -= 0.05
-		elif center_x < tcx + 40:
-			if fish.vx < 4.0: fish.vx += 0.05
-
-		if center_y > tcy + 40:
-			if fish.vy > -6.0: fish.vy -= 1.5
-		elif center_y < tcy + 40:
-			if fish.vy < 6.0: fish.vy += 1.5
-	else:
-		if center_x > tcx + 44:
-			if fish.vx > -3.0: fish.vx -= 1.0
-		elif center_x < tcx + 36:
-			if fish.vx < 3.0: fish.vx += 1.0
-		elif center_x > tcx + 42:
-			if fish.vx > -3.0: fish.vx -= 0.1
-		elif center_x < tcx + 38:
-			if fish.vx < 3.0: fish.vx += 0.1
-		elif center_x > tcx + 40:
-			if fish.vx > -3.0: fish.vx -= 0.05
-		elif center_x < tcx + 40:
-			if fish.vx < 3.0: fish.vx += 0.05
-
-		if center_y > tcy + 43:
-			if fish.vy > -3.0: fish.vy -= 1.0
-		elif center_y < tcy + 37:
-			if fish.vy < 3.0: fish.vy += 1.0
-		elif center_y > tcy + 40:
-			if fish.vy > -3.0: fish.vy -= 0.5
-		elif center_y < tcy + 40:
-			if fish.vy < 3.0: fish.vy += 0.5
-
-	if fish.vx_abs < 5:
-		fish.vx_abs += 1
+func _get_movement_cfg():
+	return {
+		"starving": {
+			"accel_x_far": 1.5, "accel_x_mid": 0.3, "accel_x_near": 0.1, "cap_x": 12.0,
+			"accel_y_far": 1.2, "accel_y_far_down": 1.5, "accel_y_near": 0.6, "accel_y_near_down": 0.8,
+			"cap_y_up": 10.0, "cap_y_down": 12.0
+		},
+		"satisfied": {
+			"accel_x_far": 1.1, "accel_x_mid": 0.2, "accel_x_near": 0.05, "cap_x": 8.0,
+			"accel_y_far": 0.8, "accel_y_far_down": 1.1, "accel_y_near": 0.4, "accel_y_near_down": 0.6,
+			"cap_y_up": 6.0, "cap_y_down": 8.0
+		}
+	}

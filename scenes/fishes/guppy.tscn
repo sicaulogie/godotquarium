@@ -7,10 +7,10 @@
 [ext_resource type="Script" uid="uid://bj75wo3t236s5" path="res://scripts/fish/guppy_feeding.gd" id="5_6lgmd"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_j8p4x"]
-radius = 25.0
+radius = 20.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_pgks6"]
-radius = 40.0
+radius = 5.0
 
 [node name="Guppy" type="Node2D" unique_id=142607553]
 script = ExtResource("1_n6yr6")
@@ -36,4 +36,5 @@ shape = SubResource("CircleShape2D_j8p4x")
 [node name="FeedingArea" type="Area2D" parent="." unique_id=889150815 groups=["food_sensor"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FeedingArea" unique_id=1928645650]
+position = Vector2(-13, 4)
 shape = SubResource("CircleShape2D_pgks6")

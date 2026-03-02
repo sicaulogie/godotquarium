@@ -73,7 +73,7 @@ func _update_state():
 			elif fish.turn_timer < 0: fish.turn_timer += 1
 	elif fish.eating_timer > 0:
 		current_state = "eat"
-		if Engine.get_process_frames() % 2 == 0:
+		if Engine.get_process_frames() % 4 == 0:
 			fish.eating_timer -= 1
 	else:
 		current_state = "swim"

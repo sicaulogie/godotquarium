@@ -6,7 +6,7 @@ const DEBUG_FOOD_NEEDED_TO_GROW = -1
 func _ready():
 	await owner.ready
 	fish = get_parent()
-	fish.hunger = randi_range(400, 500)
+	fish.hunger = randi_range(300, 500)
 	if DEBUG_FOOD_NEEDED_TO_GROW == -1:
 		fish.food_needed_to_grow = randi_range(4, 6)
 	else:
@@ -46,7 +46,7 @@ func _on_food_entered(area: Area2D):
 	food.picked_up = true
 	pending_target = food
 	eat_windup_timer = EAT_WINDUP_FRAMES
-	fish.eating_timer = 16
+	fish.eating_timer = 20
 	fish.eat_frame = 0
 
 func _confirm_eat(target: Node2D):
@@ -75,7 +75,7 @@ func _eat_food(food: Node2D):
 			fish.hunger += 1000
 			fish.hunger = min(fish.hunger, 1400)
 			fish.food_ate += 3
-	fish.eating_timer = 16
+	fish.eating_timer = 20
 	fish.eat_frame = 0
 	_check_growth(hungry_before)
 

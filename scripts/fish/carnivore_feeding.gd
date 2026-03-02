@@ -1,10 +1,11 @@
 class_name CarnivoreFeeding
 extends FishFeedingBase
+var eat_cooldown: int = 0
 
 func _ready():
 	await owner.ready
 	fish = get_parent()
-	fish.hunger = randi_range(400, 500)
+	fish.hunger = randi_range(300, 500)
 	coin_timer = randi_range(0, COIN_INTERVAL)
 	var area = fish.get_node("FeedingArea")
 	area.area_entered.connect(_on_hit_area_entered)
@@ -24,14 +25,14 @@ func _get_dead_fish_type() -> String:
 	return "carnivore"  # uses "carnivore_die" animation
 
 func _on_hit_area_entered(area: Area2D):
-	if not area.is_in_group("guppies") or pending_target != null:
+	if not area.is_in_group("guppies") or pending_target != null or eat_cooldown > 0:
 		return
 	var guppy = area.get_parent()
 	if not guppy is Guppy or guppy.is_dead:
 		return
 	pending_target = guppy
 	eat_windup_timer = EAT_WINDUP_FRAMES
-	fish.eating_timer = 16
+	fish.eating_timer = 20
 	fish.eat_frame = 0
 
 func _get_eat_radius() -> float:
@@ -39,11 +40,19 @@ func _get_eat_radius() -> float:
 
 func _confirm_eat(target: Node2D):
 	_eat_guppy(target)
+	eat_cooldown = 40
 
 func _eat_guppy(guppy: Node2D):
 	fish.hunger += 700
 	fish.hunger = min(fish.hunger, 1000)
-	fish.eating_timer = 16
+	fish.eating_timer = 20
 	fish.eat_frame = 0
 	guppy.is_dead = true
 	guppy.queue_free()
+
+func _physics_process(_delta):
+	if not is_instance_valid(fish):
+		return
+	super._physics_process(_delta)
+	if eat_cooldown > 0:
+		eat_cooldown -= 1

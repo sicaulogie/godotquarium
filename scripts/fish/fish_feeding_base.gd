@@ -6,7 +6,7 @@ var hunger_tick: int = 0
 var coin_timer: int = 0
 
 const HUNGER_DEAD = -499
-const COIN_INTERVAL = 400
+const COIN_INTERVAL = 800
 const DeadFishScene = preload("res://scenes/dead_fish.tscn")
 const CoinScene = preload("res://scenes/coin.tscn")
 var pending_target: Node2D = null
@@ -30,7 +30,7 @@ func _physics_process(_delta):
 
 func _update_hunger():
 	hunger_tick += 1
-	if hunger_tick >= 2:
+	if hunger_tick >= 4:
 		hunger_tick = 0
 		fish.hunger -= 1
 	fish.hunger = max(fish.hunger, HUNGER_DEAD)

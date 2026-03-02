@@ -21,7 +21,7 @@ func _physics_process(_delta):
 
 	_update_state_timer()
 	if fish.hunger >= 500:
-		fish.vy *= 0.95
+		fish.vy *= 0.975
 	if fish.hunger < 500:
 		var target = _find_nearest_target()
 		if target:
@@ -40,8 +40,56 @@ func _find_nearest_target() -> Node2D:
 	return null
 
 # Override in subclass — different acceleration values per fish type
-func _hungry_behavior(_target: Node2D):
-	pass
+func _hungry_behavior(target: Node2D):
+	# 30fps Gate: Only steer every 5 frames
+	fish.hungry_timer += 1
+	if fish.hungry_timer <= 5:
+		return
+	fish.hungry_timer = 0
+
+	# Get the specific numbers for THIS fish (Guppy vs Carnivore)
+	var cfg = _get_movement_cfg()
+	var mode = "starving" if fish.hunger < 301 else "satisfied"
+	var v = cfg[mode]
+
+	# Calculate Centers
+	var self_c = fish.position + _get_self_center_offset()
+	var targ_c = target.position + _get_target_center_offset(target)
+
+	# --- HORIZONTAL STEERING ---
+	if self_c.x > targ_c.x + 8:
+		if fish.vx > -v.cap_x: fish.vx -= v.accel_x_far
+	elif self_c.x < targ_c.x - 8:
+		if fish.vx < v.cap_x: fish.vx += v.accel_x_far
+	elif self_c.x > targ_c.x + 4:
+		if fish.vx > -v.cap_x: fish.vx -= v.accel_x_mid
+	elif self_c.x < targ_c.x - 4:
+		if fish.vx < v.cap_x: fish.vx += v.accel_x_mid
+	elif self_c.x > targ_c.x:
+		if fish.vx > -v.cap_x: fish.vx -= v.accel_x_near
+	elif self_c.x < targ_c.x:
+		if fish.vx < v.cap_x: fish.vx += v.accel_x_near
+
+	# --- VERTICAL STEERING ---
+	if self_c.y > targ_c.y + 6:
+		if fish.vy > -v.cap_y_up: fish.vy -= v.accel_y_far
+	elif self_c.y < targ_c.y - 6:
+		if fish.vy < v.cap_y_down: fish.vy += v.accel_y_far_down
+	elif self_c.y > targ_c.y:
+		if fish.vy > -v.cap_y_up: fish.vy -= v.accel_y_near
+	elif self_c.y < targ_c.y:
+		if fish.vy < v.cap_y_down: fish.vy += v.accel_y_near_down
+		
+	# Animation speed ramp (Doubled for 60fps)
+	if fish.vx_abs < 10:
+		fish.vx_abs += 1
+
+# Default offsets (Override in Guppy/Carnivore if their sprites are different sizes)
+func _get_self_center_offset() -> Vector2: return Vector2(40, 40)
+func _get_target_center_offset(_t) -> Vector2: return Vector2(20, 20)
+
+func _get_movement_cfg() -> Dictionary:
+	return {} # Placeholder to be overridden by Guppy/Carnivore
 
 func _update_state_timer():
 	fish.special_timer += 1
@@ -195,12 +243,12 @@ func _apply_velocity():
 func _update_entry():
 	fish.bought_timer -= 1
 	fish.entry_vy *= 0.949
-	if fish.bought_timer >= 62:
+	if fish.bought_timer >= 124:
 		entry_bubble_tick += 1
 		if entry_bubble_tick < 2:
 			return
 		entry_bubble_tick = 0
-		var chance = 1 if fish.bought_timer > 80 else 2
+		var chance = 1 if fish.bought_timer > 160 else 2
 		if randi() % chance == 0:
 			_spawn_entry_bubbles()
 
@@ -224,3 +272,15 @@ func _spawn_entry_bubbles():
 func _apply_entry_velocity():
 	fish.position.y += (fish.entry_vy / fish.speed_mod) * 0.5
 	fish.position.y = clamp(fish.position.y, -100.0, fish.y_max)
+
+# fish_movement_base.gd
+
+func _steer_toward(self_center: Vector2, target_pos: Vector2):
+	pass
+
+func _get_hungry_timer_gate() -> int:
+	return 5  # default (6 godot frames = 3 original frames)
+
+func _get_target_offset() -> Vector2:
+	# How much to offset the target position (original used top-left vs center)
+	return Vector2.ZERO

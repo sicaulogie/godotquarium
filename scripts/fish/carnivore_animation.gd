@@ -32,10 +32,10 @@ func _update_frame_index():
 			body.flip_h = false
 			fish.anim_frame_index = 9 + (fish.turn_timer / 2)
 	elif current_state == "eat":
-		if Engine.get_process_frames() % 2 == 0:
+		if Engine.get_process_frames() % 4 == 0:
 			fish.eat_frame += 1
 		fish.eat_frame = min(fish.eat_frame, 9)
-		fish.anim_frame_index = clamp(fish.eat_frame, 0, 9)
+		fish.anim_frame_index = fish.eat_frame % 10
 		if fish.vx < 0.0:       body.flip_h = false
 		elif fish.vx > 0.0:     body.flip_h = true
 		else:                   body.flip_h = fish.prev_vx > 0.0
