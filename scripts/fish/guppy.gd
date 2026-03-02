@@ -4,7 +4,7 @@ extends FishBase
 enum Size { SMALL = 0, MEDIUM = 1, LARGE = 2, KING = 3 }
 
 # Guppy-only state
-var size: int = Size.SMALL
+var size: int = Size.MEDIUM
 var food_ate: int = 0
 var food_needed_to_grow: int = 0
 

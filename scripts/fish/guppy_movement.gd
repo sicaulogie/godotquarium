@@ -35,13 +35,13 @@ func _find_nearest_target() -> Node2D:
 func _get_movement_cfg():
 	return {
 		"starving": {
-			"accel_x_far": 0.65, "accel_x_mid": 0.2, "accel_x_near": 0.05, "cap_x": 8.0,
-			"accel_y_far": 0.5, "accel_y_far_down": 1.3, "accel_y_near": 0.5, "accel_y_near_down": 0.7,
+			"accel_x_far": 0.65, "accel_x_mid": 0.1, "accel_x_near": 0.05, "cap_x": 4.0,
+			"accel_y_far": 0.5, "accel_y_far_down": 0.65, "accel_y_near": 0.5, "accel_y_near_down": 0.7,
 			"cap_y_up": 3.0, "cap_y_down": 4.0
 		},
 		"satisfied": {
-			"accel_x_far": 0.5, "accel_x_mid": 0.1, "accel_x_near": 0.05, "cap_x": 6.0,
-			"accel_y_far": 0.3, "accel_y_far_down": 1.0, "accel_y_near": 0.3, "accel_y_near_down": 0.5,
+			"accel_x_far": 0.5, "accel_x_mid": 0.1, "accel_x_near": 0.05, "cap_x": 3.0,
+			"accel_y_far": 0.3, "accel_y_far_down": 0.5, "accel_y_near": 0.3, "accel_y_near_down": 0.5,
 			"cap_y_up": 2.0, "cap_y_down": 4.0
 		}
 	}

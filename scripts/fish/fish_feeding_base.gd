@@ -11,7 +11,7 @@ const DeadFishScene = preload("res://scenes/dead_fish.tscn")
 const CoinScene = preload("res://scenes/coin.tscn")
 var pending_target: Node2D = null
 var eat_windup_timer: int = 0
-const EAT_WINDUP_FRAMES = 8
+const EAT_WINDUP_FRAMES = 2
 
 func _ready():
 	await owner.ready

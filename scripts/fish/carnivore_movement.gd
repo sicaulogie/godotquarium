@@ -29,13 +29,13 @@ func _physics_process(_delta):
 func _get_movement_cfg():
 	return {
 		"starving": {
-			"accel_x_far": 1.5, "accel_x_mid": 0.3, "accel_x_near": 0.1, "cap_x": 12.0,
-			"accel_y_far": 1.2, "accel_y_far_down": 1.5, "accel_y_near": 0.6, "accel_y_near_down": 0.8,
-			"cap_y_up": 10.0, "cap_y_down": 12.0
+			"accel_x_far": 0.75, "accel_x_mid": 0.3, "accel_x_near": 0.1, "cap_x": 6.0,
+			"accel_y_far": 0.6, "accel_y_far_down": 0.75, "accel_y_near": 0.6, "accel_y_near_down": 0.8,
+			"cap_y_up": 5.0, "cap_y_down": 6.0
 		},
 		"satisfied": {
-			"accel_x_far": 1.1, "accel_x_mid": 0.2, "accel_x_near": 0.05, "cap_x": 8.0,
+			"accel_x_far": 0.55, "accel_x_mid": 0.2, "accel_x_near": 0.05, "cap_x": 3.0,
 			"accel_y_far": 0.8, "accel_y_far_down": 1.1, "accel_y_near": 0.4, "accel_y_near_down": 0.6,
-			"cap_y_up": 6.0, "cap_y_down": 8.0
+			"cap_y_up": 3.0, "cap_y_down": 4.0
 		}
 	}

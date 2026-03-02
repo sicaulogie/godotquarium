@@ -32,7 +32,7 @@ func _drop_food(pos: Vector2):
 	# Clamp to original boundaries — fish will never get pulled to walls
 	if pos.x < 30 or pos.x > 587:
 		return
-	if pos.y < 60 or pos.y > 400:
+	if pos.y < 60 or pos.y > 440:
 		return
 	var food = FoodScene.instantiate()
 	food.position = Vector2(pos.x - 10, pos.y - 10)
