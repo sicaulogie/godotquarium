@@ -220,21 +220,19 @@ func _detect_direction_change():
 		fish.turn_timer = -20
 	elif fish.prev_vx > 0 and fish.vx < 0:
 		fish.turn_timer = 20
-	if fish.prev_vx != fish.vx and fish.prev_vx != 0 and fish.vx != 0:
+	if fish.vx != 0:
 		fish.prev_vx = fish.vx
 
 func _apply_velocity():
 	var vx_abs = abs(fish.vx)
-	if vx_abs < 1.0:
-		fish.position.y += (1.0 / fish.speed_mod) * 0.5
-	elif vx_abs < 2.0:
-		fish.position.y += (0.75 / fish.speed_mod) * 0.5
-	elif vx_abs < 3.0:
-		fish.position.y += (0.5 / fish.speed_mod) * 0.5
-	elif vx_abs < 4.0:
-		fish.position.y += (0.25 / fish.speed_mod) * 0.5
+	var passive_sink: float = 0.0
+	if abs(fish.vy) < 0.1:  # only sink when not actively moving vertically
+		if vx_abs < 1.0: passive_sink = 1.0 / fish.speed_mod * 0.5
+		elif vx_abs < 2.0: passive_sink = 0.75 / fish.speed_mod * 0.5
+		elif vx_abs < 3.0: passive_sink = 0.5 / fish.speed_mod * 0.5
+		elif vx_abs < 4.0: passive_sink = 0.25 / fish.speed_mod * 0.5
 	fish.position.x += (fish.vx / fish.speed_mod) * 0.5
-	fish.position.y += (fish.vy / fish.speed_mod) * 0.5
+	fish.position.y += (fish.vy / fish.speed_mod) * 0.5 + passive_sink
 	fish.position.x = clamp(fish.position.x, fish.x_min, fish.x_max)
 	fish.position.y = clamp(fish.position.y, fish.y_min, fish.y_max)
 
@@ -272,15 +270,3 @@ func _spawn_entry_bubbles():
 func _apply_entry_velocity():
 	fish.position.y += (fish.entry_vy / fish.speed_mod) * 0.5
 	fish.position.y = clamp(fish.position.y, -100.0, fish.y_max)
-
-# fish_movement_base.gd
-
-func _steer_toward(self_center: Vector2, target_pos: Vector2):
-	pass
-
-func _get_hungry_timer_gate() -> int:
-	return 5  # default (6 godot frames = 3 original frames)
-
-func _get_target_offset() -> Vector2:
-	# How much to offset the target position (original used top-left vs center)
-	return Vector2.ZERO

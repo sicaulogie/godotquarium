@@ -44,9 +44,9 @@ func _update_hunger_suffix():
 		if fish.was_hungry:
 			current_anim += "_hungry"
 		if body.animation != current_anim:
-			var old_frame = body.frame
 			body.set_animation(current_anim)
-			body.frame = clamp(old_frame, 0, body.sprite_frames.get_frame_count(current_anim) - 1)
+			body.frame = 0
+			fish.swim_frame_counter = 0.0
 		return
 
 	var is_hungry = fish.hunger < 0
@@ -63,8 +63,6 @@ func _update_hunger_suffix():
 
 	if fish.was_hungry and fish.hunger_anim_timer <= 10:
 		current_anim += "_hungry"
-	elif not fish.was_hungry and fish.hunger_anim_timer < -10:
-		current_anim += "_hungry"
 
 	if body.animation != current_anim:
 		var old_frame = body.frame
@@ -77,10 +75,10 @@ func _update_frame_index():
 	if current_state == "turn":
 		if fish.turn_timer > 0:
 			body.flip_h = true
-			fish.anim_frame_index = 9 - (fish.turn_timer / 2)
+			fish.anim_frame_index = abs(fish.turn_timer) / 2
 		else:
 			body.flip_h = false
-			fish.anim_frame_index = 9 + (fish.turn_timer / 2)
+			fish.anim_frame_index = (abs(fish.turn_timer) - 1) / 2
 	else:  # swim (and eat handled by subclass)
 		if fish.vx_abs < 2:
 			fish.swim_frame_counter += 0.5

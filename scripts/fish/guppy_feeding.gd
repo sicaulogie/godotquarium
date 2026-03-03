@@ -1,12 +1,12 @@
 class_name GuppyFeeding
 extends FishFeedingBase
 
-const DEBUG_FOOD_NEEDED_TO_GROW = -1
+const DEBUG_FOOD_NEEDED_TO_GROW = 2
 
 func _ready():
 	await owner.ready
 	fish = get_parent()
-	fish.hunger = randi_range(300, 500)
+	fish.hunger = randi_range(-100, 0)
 	if DEBUG_FOOD_NEEDED_TO_GROW == -1:
 		fish.food_needed_to_grow = randi_range(4, 6)
 	else:
@@ -17,10 +17,12 @@ func _ready():
 
 # Override — guppy coin type depends on size
 func _drop_coin():
+	if fish.size == 0:
+		return
 	var coin = CoinScene.instantiate()
 	coin.position = fish.position + Vector2(20, 0)
 	match fish.size:
-		1: coin.coin_type = 0  # silver — medium
+		1: coin.coin_type = 0  # silver — medium, small guppy does not drop coins
 		2: coin.coin_type = 1  # gold — large
 		3: coin.coin_type = 3  # diamond — king
 		_: return              # small fish don't drop coins
@@ -80,19 +82,17 @@ func _eat_food(food: Node2D):
 	_check_growth(hungry_before)
 
 func _check_growth(hungry_before: bool = false):
-	if fish.food_ate >= fish.food_needed_to_grow:
-		if fish.size < 2:
-			fish.size += 1
-			fish.food_ate = 0
-			fish.growth_timer = 20
-			fish.is_king_transition = false
-			return
-	if fish.food_ate >= fish.food_needed_to_grow * 8:
-		if fish.size == 2:
-			fish.food_ate = 0
-			fish.growth_timer = 0
-			fish.growth_transition_timer = 20
-			fish.is_king_transition = true
-			fish.was_hungry_at_transition = hungry_before
-			fish.eating_timer = 0
-			fish.was_eating = false
+	if fish.size < 2 and fish.food_ate >= fish.food_needed_to_grow:
+		fish.size += 1
+		fish.food_ate = 0
+		fish.growth_timer = 20
+		fish.is_king_transition = false
+		return
+	elif fish.size == 2 and fish.food_ate >= fish.food_needed_to_grow * 8:
+		fish.food_ate = 0
+		fish.growth_timer = 0
+		fish.growth_transition_timer = 20
+		fish.is_king_transition = true
+		fish.was_hungry_at_transition = hungry_before
+		fish.eating_timer = 0
+		fish.was_eating = false

@@ -44,5 +44,5 @@ func _ready():
 		vx = randf_range(0.5, 2.0)
 		prev_vx = 1.0
 	x_direction = 1
-	move_state = randi() % 9 + 1
+	move_state = randi() % 10
 	special_timer = randi() % 40

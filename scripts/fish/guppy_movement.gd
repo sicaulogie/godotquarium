@@ -6,13 +6,6 @@ var had_food_last_frame: bool = false
 func _physics_process(_delta):
 	if not is_instance_valid(fish):
 		return
-
-	if fish.bought_timer > 0:
-		_update_entry()
-		_check_wall_collision()
-		_apply_entry_velocity()
-		return  # skip normal movement while entering
-
 	super._physics_process(_delta)
 
 # Override — guppy searches food group

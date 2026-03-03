@@ -59,8 +59,9 @@ func _update_eat_state():
 	if fish.eating_timer > 0 and not fish.was_eating:
 		fish.eat_frame = 0
 		fish.was_eating = true
-	elif fish.eating_timer == 0:
+	elif fish.eating_timer == 0 and fish.was_eating:
 		fish.was_eating = false
+		fish.swim_frame_counter = 0.0  # ← reset so swim restarts cleanly
 
 # Override — guppy state includes eat
 func _update_state():
@@ -73,8 +74,6 @@ func _update_state():
 			elif fish.turn_timer < 0: fish.turn_timer += 1
 	elif fish.eating_timer > 0:
 		current_state = "eat"
-		if Engine.get_process_frames() % 4 == 0:
-			fish.eating_timer -= 1
 	else:
 		current_state = "swim"
 	current_anim = _build_anim_name(current_state)
@@ -92,7 +91,9 @@ func _update_frame_index():
 		if Engine.get_process_frames() % 2 == 0:
 			fish.eat_frame += 1
 		fish.eat_frame = min(fish.eat_frame, 9)
-		fish.anim_frame_index = clamp(fish.eat_frame, 0, 9)
+		fish.anim_frame_index = fish.eat_frame
+		if fish.eat_frame >= 9:
+			fish.eating_timer = 0
 		if fish.vx < 0.0:       body.flip_h = false
 		elif fish.vx > 0.0:     body.flip_h = true
 		else:                   body.flip_h = fish.prev_vx > 0.0

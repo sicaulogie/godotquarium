@@ -21,6 +21,8 @@ func _ready():
 func _physics_process(_delta):
 	if not is_instance_valid(fish):
 		return
+	if fish.bought_timer > 0:
+		return  # don't hunger or drop coins during entry
 	_update_hunger()
 	_update_pending_eat()
 	coin_timer += 1
