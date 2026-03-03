@@ -19,10 +19,12 @@ func _update_state():
 			if fish.turn_timer > 0: fish.turn_timer -= 1
 			elif fish.turn_timer < 0: fish.turn_timer += 1
 	elif fish.eating_timer > 0:
-		current_state = "eat"   # approach phase
 		if current_state != "eat":
 			fish.eat_frame = 0
+		current_state = "eat"
 	else:
+		if current_state == "eat":
+			fish.swim_frame_counter = 0.0
 		current_state = "swim"
 	current_anim = _build_anim_name(current_state)
 
