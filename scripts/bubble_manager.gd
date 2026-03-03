@@ -2,8 +2,8 @@ class_name BubbleManager
 extends Node2D
 
 const BubbleScene = preload("res://scenes/bubble.tscn")
-const MAX_BUBBLES = 30   # Board.cpp line 1698 — cap for normal spawns
-const BUBBLE_Y_TOP = 0
+const MAX_BUBBLES = 30
+const BUBBLE_Y_TOP = -50
 
 func _physics_process(_delta):
 	# Remove bubbles that reached the top

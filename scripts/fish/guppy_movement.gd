@@ -43,21 +43,6 @@ func _get_movement_cfg():
 		}
 	}
 
-# --- Entry system (guppy-only) ---
-
-func _update_entry():
-	fish.bought_timer -= 1
-	fish.entry_vy *= 0.949
-
-	if fish.bought_timer >= 62:
-		entry_bubble_tick += 1
-		if entry_bubble_tick < 2:
-			return
-		entry_bubble_tick = 0
-		var chance = 1 if fish.bought_timer > 80 else 2
-		if randi() % chance == 0:
-			_spawn_entry_bubbles()
-
 func _apply_entry_velocity():
 	fish.position.y += (fish.entry_vy / fish.speed_mod) * 0.5
 	fish.position.y = clamp(fish.position.y, -100.0, fish.y_max)

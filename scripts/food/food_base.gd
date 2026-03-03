@@ -2,6 +2,7 @@ class_name FoodBase
 extends Node2D
 
 var food_type: int = 0
+var initial_food_type: int = 0
 var exotic_food_type: int = 0
 var picked_up: bool = false
 var cant_eat_timer: int = 5  				# from Food.cpp constructor
@@ -17,15 +18,15 @@ var fall_speed: float = 1.5     			# from Food.cpp mYD += 1.5
 @onready var sprite: AnimatedSprite2D = $Sprite
 
 func _ready():
-	add_to_group("food")          			# Food root node joins group
-	$FoodArea.add_to_group("food") 			# FoodArea also joins group
+	food_type = initial_food_type  # this triggers the setter, but sprite is ready now
+	add_to_group("food")
+	$FoodArea.add_to_group("food")
 	xd = position.x
 	yd = position.y
 	anim_speed = randi_range(6, 8)
-	fade_timer = 0  						# make sure this starts at 0
-	#cant_eat_timer = 5
-	sprite.pause()
+	fade_timer = 0
 	sprite.play(get_animation_name())
+	sprite.pause()
 
 func _physics_process(_delta):
 	if cant_eat_timer > 0:

@@ -29,12 +29,12 @@ const FOOD_Y_MIN = 60.0
 const FOOD_Y_MAX = 460.0
 
 func _drop_food(pos: Vector2):
-	# Clamp to original boundaries — fish will never get pulled to walls
 	if pos.x < 30 or pos.x > 587:
 		return
 	if pos.y < 60 or pos.y > 440:
 		return
 	var food = FoodScene.instantiate()
+	food.initial_food_type = current_food_type  # ← add this before add_child
 	food.position = Vector2(pos.x - 10, pos.y - 10)
 	add_child(food)
 

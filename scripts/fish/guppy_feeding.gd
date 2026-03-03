@@ -1,7 +1,7 @@
 class_name GuppyFeeding
 extends FishFeedingBase
 
-const DEBUG_FOOD_NEEDED_TO_GROW = 10
+const DEBUG_FOOD_NEEDED_TO_GROW = -1
 
 func _ready():
 	await owner.ready
@@ -41,12 +41,17 @@ func _eat_food(food: Node2D):
 	match food.food_type:
 		0:
 			fish.food_ate += 1
+			fish.hunger += 500
+			fish.hunger = min(fish.hunger, 800)
 		1:
 			fish.food_ate += 2
+			fish.hunger += 700
+			fish.hunger = min(fish.hunger, 1000)
 		2:
 			fish.food_ate += 3
-	fish.hunger = 800
-	fish.eating_timer = 16  # ← also change from 20 to 8 to match original confirm-eat timer
+			fish.hunger += 1100
+			fish.hunger = min(fish.hunger, 1400)
+	fish.eating_timer = 16
 	_check_growth(hungry_before)
 
 func _check_growth(hungry_before: bool = false):
@@ -63,9 +68,12 @@ func _check_growth(hungry_before: bool = false):
 		fish.is_king_transition = true
 		fish.was_hungry_at_transition = hungry_before
 		fish.eating_timer = 0
-		fish.was_eating = false
 
 func _check_food_collision():
+	if fish.hunger >= 500:
+		return
+	if eat_approach_cooldown > 0:
+		eat_approach_cooldown -= 1
 	for f in get_tree().get_nodes_in_group("food"):
 		if not f is FoodBase or f.picked_up or f.cant_eat_timer > 0:
 			continue
@@ -73,15 +81,13 @@ func _check_food_collision():
 		var cy = fish.position.y + 40.0
 		var fx = f.position.x
 		var fy = f.position.y
-		# Inner box — confirm eat
 		if cx > fx + 5 and cx < fx + 35 and cy > fy and cy < fy + 35:
 			if not f.picked_up:
 				f.picked_up = true
 				eat_approach_cooldown = 80
 				_confirm_eat(f)
-		return
-		# Outer box — open mouth only
-		if fish.eating_timer == 0:
+			return
+		if fish.eating_timer == 0 and eat_approach_cooldown == 0:
 			if cx > fx - 10 and cx < fx + 50 and cy > fy - 5 and cy < fy + 40:
 				fish.eating_timer = 40
 				eat_approach_cooldown = 50

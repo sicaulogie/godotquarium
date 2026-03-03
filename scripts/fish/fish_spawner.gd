@@ -15,7 +15,7 @@ static func spawn_guppy(parent: Node, pos: Vector2 = Vector2(-1, -1), entry: boo
 	fish.position = Vector2(pos.x, 30.0)   # start at top
 	parent.add_child(fish)
 	if entry:
-		fish.entry_vy = randi_range(18, 22)
+		fish.entry_vy = randi_range(9, 11)
 		fish.bought_timer = randi_range(90, 108)
 		_spawn_bubbles(parent, fish.position, 40.0)
 	return fish
@@ -28,13 +28,11 @@ static func spawn_carnivore(parent: Node, pos: Vector2 = Vector2(-1, -1)) -> Nod
 	parent.add_child(fish)
 	fish.entry_vy = randi_range(18, 22)
 	fish.bought_timer = randi_range(90, 108)
-	_spawn_bubbles(parent, fish.position, 80.0)
+	_spawn_bubbles(parent, fish.position, 60.0)  # ← 80 was too large
 	return fish
 
 static func _spawn_bubbles(parent: Node, pos: Vector2, radius: float):
 	var bm = parent.get_node_or_null("BubbleManager")
-	if not bm:
-		return
 	var count = randi_range(3, 6)
 	for i in count:
 		var angle = randf() * TAU
