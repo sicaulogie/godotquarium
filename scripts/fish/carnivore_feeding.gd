@@ -7,8 +7,6 @@ func _ready():
 	fish = get_parent()
 	fish.hunger = randi_range(300, 500)
 	coin_timer = randi_range(0, COIN_INTERVAL)
-	var area = fish.get_node("FeedingArea")
-	area.area_entered.connect(_on_hit_area_entered)
 
 # Override — carnivore always drops star coin (type 2) from BiFish::DropCoin()
 func _drop_coin():
@@ -25,13 +23,11 @@ func _get_dead_fish_type() -> String:
 	return "carnivore"  # uses "carnivore_die" animation
 
 func _on_hit_area_entered(area: Area2D):
-	if not area.is_in_group("guppies") or pending_target != null or eat_cooldown > 0:
+	if not area.is_in_group("guppies") or eat_cooldown > 0:
 		return
 	var guppy = area.get_parent()
 	if not guppy is Guppy or guppy.is_dead:
 		return
-	pending_target = guppy
-	eat_windup_timer = EAT_WINDUP_FRAMES
 	fish.eating_timer = 20
 
 func _get_eat_radius() -> float:

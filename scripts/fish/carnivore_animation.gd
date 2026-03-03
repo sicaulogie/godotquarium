@@ -7,7 +7,11 @@ func _build_anim_name(state: String) -> String:
 
 # Override — carnivore has eat state (no growth transition, no scale pop)
 func _update_state():
-	if fish.turn_timer != 0:
+	if fish.eating_timer > 0 and fish.eating_timer <= 16:
+		if current_state != "eat":
+			fish.eat_frame = 0  # reset on entry (issue 5)
+		current_state = "eat"   # confirm-eat phase overrides turn (mirrors guppy fix)
+	elif fish.turn_timer != 0:
 		current_state = "turn"
 		fish.turn_tick += 1
 		if fish.turn_tick >= 2:
@@ -15,9 +19,9 @@ func _update_state():
 			if fish.turn_timer > 0: fish.turn_timer -= 1
 			elif fish.turn_timer < 0: fish.turn_timer += 1
 	elif fish.eating_timer > 0:
-		current_state = "eat"
-		if Engine.get_process_frames() % 2 == 0:
-			fish.eating_timer -= 1
+		current_state = "eat"   # approach phase
+		if current_state != "eat":
+			fish.eat_frame = 0
 	else:
 		current_state = "swim"
 	current_anim = _build_anim_name(current_state)
@@ -35,7 +39,7 @@ func _update_frame_index():
 		if Engine.get_process_frames() % 4 == 0:
 			fish.eat_frame += 1
 		fish.eat_frame = min(fish.eat_frame, 9)
-		fish.anim_frame_index = fish.eat_frame % 10
+		fish.anim_frame_index = fish.eat_frame
 		if fish.vx < 0.0:       body.flip_h = false
 		elif fish.vx > 0.0:     body.flip_h = true
 		else:                   body.flip_h = fish.prev_vx > 0.0
