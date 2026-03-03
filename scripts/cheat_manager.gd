@@ -20,12 +20,19 @@ func _input(event):
 
 			# Gameplay cheats — cheat_mode required
 			KEY_1:
-				if cheat_mode: _spawn_guppy()
+				if cheat_mode: _spawn_guppy(Guppy.Size.SMALL)
 			KEY_2:
+				if cheat_mode: _spawn_guppy(Guppy.Size.MEDIUM)
+			KEY_3:
+				if cheat_mode: _spawn_guppy(Guppy.Size.LARGE)
+			KEY_4:
+				if cheat_mode: _spawn_guppy(Guppy.Size.KING)
+			KEY_5:
 				if cheat_mode: _spawn_carnivore()
 
-func _spawn_guppy():
-	FishSpawner.spawn_guppy(get_parent())
+func _spawn_guppy(size: int = Guppy.Size.SMALL):
+	var fish = FishSpawner.spawn_guppy(get_parent())
+	fish.size = size
 
 func _spawn_carnivore():
 	FishSpawner.spawn_carnivore(get_parent())

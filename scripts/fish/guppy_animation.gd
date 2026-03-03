@@ -17,7 +17,6 @@ func _get_size_prefix() -> String:
 func _update_animation():
 	if _update_growth_transition():
 		return
-	_update_eat_state()
 	_update_state()
 	_update_hunger_suffix()
 	_update_frame_index()
@@ -32,9 +31,10 @@ func _update_growth_transition() -> bool:
 	if fish.growth_transition_timer == 0:
 		fish.eating_timer = 0
 		fish.was_eating = false
-		fish.eat_frame = 0
 		fish.was_hungry = false
 		fish.hunger_anim_timer = 0
+		fish.swim_frame_counter = 0.0  # ← add this
+		current_state = "swim"          # ← and this
 		return true
 
 	var anim: String
@@ -57,7 +57,6 @@ func _update_growth_transition() -> bool:
 
 func _update_eat_state():
 	if fish.eating_timer > 0 and not fish.was_eating:
-		fish.eat_frame = 0
 		fish.was_eating = true
 	elif fish.eating_timer == 0 and fish.was_eating:
 		fish.was_eating = false
@@ -65,7 +64,9 @@ func _update_eat_state():
 
 # Override — guppy state includes eat
 func _update_state():
-	if fish.turn_timer != 0:
+	if fish.eating_timer > 0 and fish.eating_timer <= 16:
+		current_state = "eat"  # confirm-eat phase overrides everything including turn
+	elif fish.turn_timer != 0:
 		current_state = "turn"
 		fish.turn_tick += 1
 		if fish.turn_tick >= 2:
@@ -73,7 +74,7 @@ func _update_state():
 			if fish.turn_timer > 0: fish.turn_timer -= 1
 			elif fish.turn_timer < 0: fish.turn_timer += 1
 	elif fish.eating_timer > 0:
-		current_state = "eat"
+		current_state = "eat"  # approach phase, still show eat anim name for hunger suffix
 	else:
 		current_state = "swim"
 	current_anim = _build_anim_name(current_state)
@@ -82,21 +83,29 @@ func _update_state():
 func _update_frame_index():
 	if current_state == "turn":
 		if fish.turn_timer > 0:
-			body.flip_h = true
-			fish.anim_frame_index = 9 - (fish.turn_timer / 2)
-		else:
 			body.flip_h = false
-			fish.anim_frame_index = 9 + (fish.turn_timer / 2)
+			fish.anim_frame_index = (abs(fish.turn_timer) - 1) / 2
+		else:
+			body.flip_h = true
+			fish.anim_frame_index = (abs(fish.turn_timer) - 1) / 2
 	elif current_state == "eat":
-		if Engine.get_process_frames() % 2 == 0:
-			fish.eat_frame += 1
-		fish.eat_frame = min(fish.eat_frame, 9)
-		fish.anim_frame_index = fish.eat_frame
-		if fish.eat_frame >= 9:
-			fish.eating_timer = 0
-		if fish.vx < 0.0:       body.flip_h = false
-		elif fish.vx > 0.0:     body.flip_h = true
-		else:                   body.flip_h = fish.prev_vx > 0.0
+		if fish.eating_timer <= 8:
+			fish.anim_frame_index = 9 - (fish.eating_timer / 2)  # frames 5→9
+			if fish.vx < 0.0:       body.flip_h = false
+			elif fish.vx > 0.0:     body.flip_h = true
+			else:                   body.flip_h = fish.prev_vx > 0.0
+		else:
+			# Approach phase — swim animation, just open no mouth
+			if fish.vx_abs < 2:
+				fish.swim_frame_counter += 0.5
+			else:
+				fish.swim_frame_counter += 1.0
+			if fish.swim_frame_counter >= 20:
+				fish.swim_frame_counter = 0.0
+			fish.anim_frame_index = int(fish.swim_frame_counter / 2.0)
+			if fish.vx < 0.0:        body.flip_h = false
+			elif fish.vx > 0.0:      body.flip_h = true
+			else:                    body.flip_h = fish.prev_vx > 0.0
 	else:  # swim
 		if fish.vx_abs < 2:
 			fish.swim_frame_counter += 0.5

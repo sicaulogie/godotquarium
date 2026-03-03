@@ -33,7 +33,6 @@ func _on_hit_area_entered(area: Area2D):
 	pending_target = guppy
 	eat_windup_timer = EAT_WINDUP_FRAMES
 	fish.eating_timer = 20
-	fish.eat_frame = 0
 
 func _get_eat_radius() -> float:
 	return 60.0
@@ -43,10 +42,8 @@ func _confirm_eat(target: Node2D):
 	eat_cooldown = 40
 
 func _eat_guppy(guppy: Node2D):
-	fish.hunger += 700
-	fish.hunger = min(fish.hunger, 1000)
-	fish.eating_timer = 20
-	fish.eat_frame = 0
+	fish.hunger = 800
+	fish.eating_timer = 16
 	guppy.is_dead = true
 	guppy.queue_free()
 
@@ -56,3 +53,21 @@ func _physics_process(_delta):
 	super._physics_process(_delta)
 	if eat_cooldown > 0:
 		eat_cooldown -= 1
+
+func _check_food_collision():
+	for g in get_tree().get_nodes_in_group("guppies"):
+		if not g is Guppy or g.is_dead or g.size != Guppy.Size.SMALL:
+			continue
+		var cx = fish.position.x + 40.0
+		var cy = fish.position.y + 40.0
+		var gx = g.position.x
+		var gy = g.position.y
+		# Inner box — confirm eat
+		if cx > gx + 5 and cx < gx + 75 and cy > gy + 5 and cy < gy + 75:
+			_confirm_eat(g)
+			return
+		# Outer box — open mouth
+		if fish.eating_timer == 0 and eat_approach_cooldown == 0:
+			if cx > gx - 20 and cx < gx + 100 and cy > gy - 20 and cy < gy + 100:
+				fish.eating_timer = 40
+				eat_approach_cooldown = 50

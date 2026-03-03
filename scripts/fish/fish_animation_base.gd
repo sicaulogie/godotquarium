@@ -45,8 +45,6 @@ func _update_hunger_suffix():
 			current_anim += "_hungry"
 		if body.animation != current_anim:
 			body.set_animation(current_anim)
-			body.frame = 0
-			fish.swim_frame_counter = 0.0
 		return
 
 	var is_hungry = fish.hunger < 0

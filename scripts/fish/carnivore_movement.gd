@@ -1,21 +1,6 @@
 class_name CarnivoreMovement
 extends FishMovementBase
 
-# Override — carnivore searches guppy group
-func _find_nearest_target() -> Node2D:
-	var nearest = null
-	var nearest_dist = INF
-	for g in get_tree().get_nodes_in_group("guppies"):
-		if not g is Guppy or g.is_dead:
-			continue
-		var d = fish.position.distance_squared_to(g.position)
-		if d < nearest_dist:
-			nearest_dist = d
-			nearest = g
-	if nearest_dist > 10000:
-		return null
-	return nearest
-
 func _physics_process(_delta):
 	if not is_instance_valid(fish):
 		return
@@ -39,3 +24,9 @@ func _get_movement_cfg():
 			"cap_y_up": 3.0, "cap_y_down": 4.0
 		}
 	}
+
+func _get_target_group() -> String:
+	return "guppies"
+
+func _is_valid_target(candidate: Node2D) -> bool:
+	return candidate is Guppy and not candidate.is_dead and candidate.size == Guppy.Size.SMALL

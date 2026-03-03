@@ -12,23 +12,55 @@ const CoinScene = preload("res://scenes/coin.tscn")
 var pending_target: Node2D = null
 var eat_windup_timer: int = 0
 const EAT_WINDUP_FRAMES = 2
+var eat_approach_cooldown: int = 0
 
 func _ready():
 	await owner.ready
 	fish = get_parent()
 	coin_timer = randi_range(0, COIN_INTERVAL)
 
+# In fish_feeding_base.gd:
 func _physics_process(_delta):
 	if not is_instance_valid(fish):
 		return
 	if fish.bought_timer > 0:
-		return  # don't hunger or drop coins during entry
+		return
 	_update_hunger()
-	_update_pending_eat()
+	if fish.eating_timer > 0:
+		if Engine.get_process_frames() % 2 == 0:
+			fish.eating_timer -= 1
+	_check_food_collision()
 	coin_timer += 1
 	if coin_timer >= COIN_INTERVAL:
 		coin_timer = 0
 		_drop_coin()
+
+# Override to return false if a fish type doesn't use area polling
+func _should_poll() -> bool:
+	return true
+
+func _poll_feeding_area():
+	var area = fish.get_node_or_null("FeedingArea")
+	if not area:
+		return
+	for a in area.get_overlapping_areas():
+		if a.is_in_group("food"):
+			_on_food_entered(a)
+			break
+
+# Make missed-eat safety universal
+func _on_eat_missed():
+	if is_instance_valid(pending_target):
+		pending_target.picked_up = false
+	pending_target = null
+	_on_eat_missed_extra()
+
+# Override in subclasses that need extra cleanup
+func _on_eat_missed_extra():
+	pass
+	
+func _on_food_entered(_area: Area2D):
+	pass
 
 func _update_hunger():
 	hunger_tick += 1
@@ -39,34 +71,20 @@ func _update_hunger():
 	if fish.hunger <= HUNGER_DEAD and not fish.is_dead:
 		_die()
 		
-func _update_pending_eat():
-	if pending_target == null:
+func _check_food_collision():
+	if fish.hunger >= 800:
 		return
-	if not is_instance_valid(pending_target):
-		pending_target = null
-		return
-	eat_windup_timer -= 1
-	if eat_windup_timer > 0:
-		return
-	var hit_radius = _get_eat_radius()
-	if fish.position.distance_to(pending_target.position) < hit_radius:
-		_confirm_eat(pending_target)
-	else:
-		_on_eat_missed()
-	pending_target = null
+	if eat_approach_cooldown > 0:  # ← add this
+		eat_approach_cooldown -= 1
+	pass
 
 # Override per fish — how close is close enough to confirm eat
 func _get_eat_radius() -> float:
 	return 50.0
 
 # Override per fish — what happens when eat is confirmed
-func _confirm_eat(target: Node2D):
+func _confirm_eat(_target: Node2D):
 	pass
-
-# Override per fish — what happens when fish missed (optional)
-func _on_eat_missed():
-	fish.eating_timer = 0
-	fish.eat_frame = 0
 
 # Override per fish type
 func _drop_coin():

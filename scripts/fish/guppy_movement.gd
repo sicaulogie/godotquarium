@@ -9,7 +9,7 @@ func _physics_process(_delta):
 	super._physics_process(_delta)
 
 # Override — guppy searches food group
-func _find_nearest_target() -> Node2D:
+func _search_for_target() -> Node2D:
 	var nearest = null
 	var nearest_dist = INF
 	for f in get_tree().get_nodes_in_group("food"):
@@ -23,7 +23,12 @@ func _find_nearest_target() -> Node2D:
 			nearest = f
 	return nearest
 
-# In GuppyMovement.gd
+# In guppy_movement.gd:
+func _get_target_group() -> String:
+	return "food"
+
+func _is_valid_target(candidate: Node2D) -> bool:
+	return candidate is FoodBase and candidate.cant_eat_timer == 0 and not candidate.picked_up
 
 func _get_movement_cfg():
 	return {

@@ -31,10 +31,10 @@ var was_hungry: bool = false
 var hunger_anim_timer: int = 0
 
 # Tank bounds — overridden per fish type
-var x_min: float = 20.0
-var x_max: float = 540.0
-var y_min: float = 95.0
-var y_max: float = 370.0
+var x_min: float = 40.0
+var x_max: float = 520.0
+var y_min: float = 140.0
+var y_max: float = 400.0
 
 func _ready():
 	if randi() % 2 == 0:

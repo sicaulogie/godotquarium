@@ -35,15 +35,40 @@ func _physics_process(_delta):
 	_detect_direction_change()
 	_apply_velocity()
 
-# Override in subclass — guppy finds food, carnivore finds guppies
+var locked_target: Node2D = null
+
 func _find_nearest_target() -> Node2D:
-	return null
+	if is_instance_valid(locked_target) and _is_valid_target(locked_target):
+		return locked_target
+	locked_target = _search_for_target()
+	return locked_target
+
+# Override this in subclasses instead of _find_nearest_target
+func _search_for_target() -> Node2D:
+	var nearest = null
+	var nearest_dist = INF
+	for candidate in get_tree().get_nodes_in_group(_get_target_group()):
+		if not _is_valid_target(candidate):
+			continue
+		var d = fish.position.distance_squared_to(candidate.position)
+		if d < nearest_dist:
+			nearest_dist = d
+			nearest = candidate
+	if nearest_dist > 10000:
+		return null
+	return nearest
+
+func _get_target_group() -> String:
+	return ""  # override per fish
+
+func _is_valid_target(candidate: Node2D) -> bool:
+	return true  # override per fish
 
 # Override in subclass — different acceleration values per fish type
 func _hungry_behavior(target: Node2D):
 	# 30fps Gate: Only steer every 5 frames
 	fish.hungry_timer += 1
-	if fish.hungry_timer <= 5:
+	if fish.hungry_timer <= 2:
 		return
 	fish.hungry_timer = 0
 
@@ -71,9 +96,9 @@ func _hungry_behavior(target: Node2D):
 		if fish.vx < v.cap_x: fish.vx += v.accel_x_near
 
 	# --- VERTICAL STEERING ---
-	if self_c.y > targ_c.y + 6:
+	if self_c.y > targ_c.y + 3:
 		if fish.vy > -v.cap_y_up: fish.vy -= v.accel_y_far
-	elif self_c.y < targ_c.y - 6:
+	elif self_c.y < targ_c.y - 3:
 		if fish.vy < v.cap_y_down: fish.vy += v.accel_y_far_down
 	elif self_c.y > targ_c.y:
 		if fish.vy > -v.cap_y_up: fish.vy -= v.accel_y_near
@@ -161,7 +186,7 @@ func _apply_state_0_to_4():
 func _apply_state_5_to_9():
 	if fish.special_timer > 39:
 		fish.special_timer = 0
-		if fish.position.y >= 115.0:
+		if fish.position.y >= fish.y_min + 25.0:
 			fish.vy = -0.5
 		else:
 			fish.vy = -0.1
