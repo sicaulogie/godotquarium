@@ -4,8 +4,6 @@ extends FishBase
 # Carnivore-specific bounds — from BiFish::Init()
 # y_min = 105, y_max = 360 (tighter than guppy)
 
-var coin_timer: int = 0
-
 # Eating animation
 var eating_timer: int = 0
 var eat_frame: int = 0

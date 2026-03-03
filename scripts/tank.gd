@@ -7,8 +7,8 @@ var current_food_type: int = 2
 var food_type_names = ["Base", "Pellet", "Capsule"]
 
 func _ready():
-	#_spawn_fish(150, 200, false)
-	#_spawn_fish(300, 250, false)
+	_spawn_fish(150, 200, false)
+	_spawn_fish(300, 250, false)
 	pass
 
 func _input(event):

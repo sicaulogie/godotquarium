@@ -9,6 +9,9 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_ee4vj"]
 radius = 40.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_qhuet"]
+radius = 20.0
+
 [node name="Carnivore" type="Node2D" unique_id=532288716]
 script = ExtResource("1_ee4vj")
 
@@ -29,3 +32,9 @@ script = ExtResource("5_hmyl6")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitArea" unique_id=79131574]
 shape = SubResource("CircleShape2D_ee4vj")
+
+[node name="FeedingArea" type="Area2D" parent="." unique_id=1703131897 groups=["food_sensor"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FeedingArea" unique_id=1618832492]
+position = Vector2(-27, 9)
+shape = SubResource("CircleShape2D_qhuet")

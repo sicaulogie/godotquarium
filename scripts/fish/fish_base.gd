@@ -26,7 +26,6 @@ var swim_frame_counter: float = 0.0
 var anim_frame_index: int = 0
 
 # Hunger display
-var hungry_timer: int = 0
 var was_hungry: bool = false
 var hunger_anim_timer: int = 0
 
@@ -46,3 +45,4 @@ func _ready():
 	x_direction = 1
 	move_state = randi() % 10
 	special_timer = randi() % 40
+	speed_mod = [1.6, 1.8, 2.0][randi() % 3]

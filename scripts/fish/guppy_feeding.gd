@@ -30,11 +30,6 @@ func _drop_coin():
 func _get_dead_fish_size() -> int:
 	return fish.size
 
-func _can_eat_food(food: Node2D) -> bool:
-	if food.picked_up or food.cant_eat_timer != 0:
-		return false
-	return true
-
 func _confirm_eat(target: Node2D):
 	_eat_food(target)
 	target.queue_free()

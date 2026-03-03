@@ -23,12 +23,11 @@ func _search_for_target() -> Node2D:
 			nearest = f
 	return nearest
 
-# In guppy_movement.gd:
 func _get_target_group() -> String:
 	return "food"
 
 func _is_valid_target(candidate: Node2D) -> bool:
-	return candidate is FoodBase and candidate.cant_eat_timer == 0 and not candidate.picked_up
+	return candidate is FoodBase and not candidate.picked_up and candidate.cant_eat_timer == 0
 
 func _get_movement_cfg():
 	return {

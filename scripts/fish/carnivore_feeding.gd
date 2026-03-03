@@ -22,9 +22,6 @@ func _get_dead_fish_size() -> int:
 func _get_dead_fish_type() -> String:
 	return "carnivore"  # uses "carnivore_die" animation5
 
-func _get_eat_radius() -> float:
-	return 60.0
-
 func _confirm_eat(target: Node2D):
 	fish.eat_frame = 0  # ← always reset on actual eat
 	_eat_guppy(target)
@@ -46,10 +43,10 @@ func _physics_process(_delta):
 func _check_food_collision():
 	if fish.hunger >= 500:  # ← don't chase or eat when satisfied
 		return
-	if eat_cooldown > 0:
-		return
 	if eat_approach_cooldown > 0:
 		eat_approach_cooldown -= 1
+	if eat_cooldown > 0:
+		return
 	for g in get_tree().get_nodes_in_group("guppies"):
 		if not g is Guppy or g.is_dead or g.size != Guppy.Size.SMALL:
 			continue
